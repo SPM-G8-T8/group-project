@@ -19,7 +19,6 @@ class RoleListingUpdate(BaseModel):
     role_listing_open: Union[date, None] = None
     role_listing_close: Union[date, None] = None
 
-
 class RoleListingRead(RoleListingBase):
     role_listing_id: int
     role_listing_creator: int

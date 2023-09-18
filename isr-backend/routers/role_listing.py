@@ -22,6 +22,28 @@ router = APIRouter(
 db_dependency = Annotated[Session, Depends(get_db)]
 
 
+@router.get("/{listing_id}")
+def get_all_listings(db: db_dependency, listing_id: int | None = None, filter: str | None = None):
+    
+    if listing_id: 
+         res = db.query(models.RoleListings).filter(models.RoleListings.role_listing_id == listing_id).first()
+         if not res:
+            raise HTTPException(status_code=404, detail="Listing not found")     
+         return res
+    
+    res = db.query(models.RoleListings) \
+    .join(models.RoleDetails) \
+    .filter(models.RoleDetails.role_status == "active",
+            models.RoleDetails.role_id == models.RoleListings.role_id)
+    
+    if filter:
+        res = res.filter(models.RoleListings.role_listing_desc.contains(filter))
+    
+    if res.count() == 0:
+            raise HTTPException(status_code=404, detail="No listings found")     
+    
+    return res.all()
+
 
 @router.post("/create")
 def create_listings(listing: RoleListingCreate, db: db_dependency):
@@ -47,8 +69,3 @@ def create_listings(listing: RoleListingCreate, db: db_dependency):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/")
-def get_all_listings(db: db_dependency):
-    res = db.query(models.RoleListings).all()
-
-    return res
