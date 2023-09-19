@@ -4,6 +4,7 @@ from fastapi_pagination.ext.sqlalchemy import paginate
 from fastapi.encoders import jsonable_encoder
 from database import get_db, SessionLocal
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import SQLAlchemyError
 from typing import Annotated
 from schemas import RoleListingCreate, RoleListingRead, RoleListingUpdate
 import models
@@ -56,10 +57,15 @@ def get_listing_by_id(listing_id: int, db: db_dependency):
 @router.post("/create")
 def create_listings(listing: RoleListingCreate, db: db_dependency):
 
-    print(listing)
+    listing_query = db.query(models.RoleListings).filter(models.RoleListings.role_listing_id == listing.role_listing_id).first()
+
+    if listing_query:
+        raise HTTPException(status_code=409, detail=f"Role Listing ID {listing.role_listing_id} already exist!")
+
 
     try: 
         listing_obj = models.RoleListings(
+            role_listing_id = listing.role_listing_id,
             role_id = listing.role_id,
             role_listing_desc = listing.role_listing_desc,
             role_listing_source = listing.role_listing_source,
@@ -73,7 +79,7 @@ def create_listings(listing: RoleListingCreate, db: db_dependency):
 
         return {"message": "Listing created!", "listing": jsonable_encoder(listing_obj)}
     
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except SQLAlchemyError as e:
+        raise HTTPException(status_code=500, detail=str(e.orig))
 
 

@@ -11,6 +11,7 @@ class RoleListingBase(BaseModel):
     role_listing_close: date
 
 class RoleListingCreate(RoleListingBase):
+    role_listing_id: int
     role_listing_creator: int
     
 class RoleListingUpdate(BaseModel):
