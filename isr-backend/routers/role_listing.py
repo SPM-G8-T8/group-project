@@ -1,4 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
+from fastapi_pagination import Page, paginate
+from fastapi_pagination.ext.sqlalchemy import paginate
 from fastapi.encoders import jsonable_encoder
 from database import get_db, SessionLocal
 from sqlalchemy.orm import Session
@@ -22,27 +24,33 @@ router = APIRouter(
 db_dependency = Annotated[Session, Depends(get_db)]
 
 
-@router.get("/{listing_id}")
+@router.get("/", response_model=Page[RoleListingRead])
 def get_all_listings(db: db_dependency, listing_id: int | None = None, filter: str | None = None):
-    
-    if listing_id: 
-         res = db.query(models.RoleListings).filter(models.RoleListings.role_listing_id == listing_id).first()
-         if not res:
-            raise HTTPException(status_code=404, detail="Listing not found")     
-         return res
     
     res = db.query(models.RoleListings) \
     .join(models.RoleDetails) \
     .filter(models.RoleDetails.role_status == "active",
             models.RoleDetails.role_id == models.RoleListings.role_id)
-    
     if filter:
         res = res.filter(models.RoleListings.role_listing_desc.contains(filter))
     
     if res.count() == 0:
             raise HTTPException(status_code=404, detail="No listings found")     
     
-    return res.all()
+    return paginate(res)
+
+@router.get("/{listing_id}", response_model=RoleListingRead)
+def get_listing_by_id(listing_id: int, db: db_dependency):
+    res = db.query(models.RoleListings) \
+    .join(models.RoleDetails) \
+    .filter(models.RoleDetails.role_status == "active",
+            models.RoleDetails.role_id == models.RoleListings.role_id,
+            models.RoleListings.role_listing_id == listing_id).first()
+
+    if not res:
+        raise HTTPException(status_code=404, detail="Listing not found")
+
+    return res
 
 
 @router.post("/create")

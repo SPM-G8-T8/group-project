@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends
+from fastapi_pagination import add_pagination
 from fastapi.middleware.cors import CORSMiddleware
 import models
 from database import get_db
@@ -21,6 +22,8 @@ db_dependency = Annotated[Session, Depends(get_db)]
 
 
 app.include_router(role_listing.router)
+
+add_pagination(app)
 
 @app.get("/test")
 def test(db: db_dependency):
