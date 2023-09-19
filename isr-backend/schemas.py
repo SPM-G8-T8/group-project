@@ -25,3 +25,17 @@ class RoleListingRead(RoleListingBase):
     role_listing_updater: int
     role_listing_ts_create: datetime
     role_listing_ts_update: datetime
+
+class SkillDetailsBase(BaseModel):
+    skill_id: int
+    skill_name: str
+    skill_status: str
+
+class SkillDetailsCreate(SkillDetailsBase):
+    pass
+
+class SkillDetailsUpdate(SkillDetailsBase):
+    pass
+
+class SkillDetailsRead(SkillDetailsBase):
+    pass
