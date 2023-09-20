@@ -69,7 +69,7 @@ class RoleListings(Base):
 
     role_listing_id = Column(Integer, primary_key=True, index=True)
     role_id = Column(Integer, ForeignKey(RoleDetails.role_id))
-    role_listing_desc = Column(String)
+    role_listing_desc = Column(String(50000))
     role_listing_source = Column(Integer, ForeignKey(StaffDetails.staff_id))
     role_listing_open = Column(Date)
     role_listing_close = Column(Date)
