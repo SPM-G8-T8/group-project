@@ -62,17 +62,8 @@ def create_listings(listing: RoleListingCreate, db: db_dependency):
     if listing_query:
         raise HTTPException(status_code=409, detail=f"Role Listing ID {listing.role_listing_id} already exist!")
 
-
     try: 
-        listing_obj = models.RoleListings(
-            role_listing_id = listing.role_listing_id,
-            role_id = listing.role_id,
-            role_listing_desc = listing.role_listing_desc,
-            role_listing_source = listing.role_listing_source,
-            role_listing_open = listing.role_listing_open,
-            role_listing_close = listing.role_listing_close,
-            role_listing_creator = listing.role_listing_creator
-        )
+        listing_obj = models.RoleListings(**dict(listing))
 
         db.add(listing_obj)
         db.commit()
