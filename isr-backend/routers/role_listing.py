@@ -40,8 +40,10 @@ def get_all_listings(db: db_dependency, listing_id: int | None = None, filter: s
     
     return paginate(res)
 
+
 @router.get("/{listing_id}", response_model=RoleListingRead)
 def get_listing_by_id(listing_id: int, db: db_dependency):
+    
     res = db.query(models.RoleListings) \
     .join(models.RoleDetails) \
     .filter(models.RoleDetails.role_status == "active",
