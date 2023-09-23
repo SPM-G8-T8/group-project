@@ -16,6 +16,16 @@ const routes = [
       },
     ],
   },
+  {
+    path: '/skills',
+    children: [
+      {
+        path: '',
+        name: 'Skills',
+        component: () => import('@/views/Skills.vue'),
+      },
+    ],
+  }
 ]
 
 const router = createRouter({
