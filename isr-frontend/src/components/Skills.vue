@@ -7,7 +7,14 @@
         </v-row>
         <v-row>
             <v-col cols="8">
-                <p>Search for skills</p>
+                <v-text-field
+                    label="Search"
+                    outlined
+                    v-model="search"
+                    append-inner-icon="mdi-magnify"
+                    append-icon="mdi-close"
+                    @click:append="clearSearch"
+                ></v-text-field>
             </v-col>
             <v-col cols="4">
                 <v-btn @click="overlay = !overlay">
@@ -22,7 +29,7 @@
             </v-col>
         </v-row>
         <v-row>
-            <div v-for="skill in skills" :key="skill.skill_id">
+            <div v-for="skill in searchSkills()" :key="skill.skill_id">
                 <v-col cols="4">
                     <v-card width="350">
                         <v-row>
@@ -72,7 +79,14 @@
                         ></v-select>
                     </v-col>
                 </v-row>
-
+                <div v-if="name_exists">
+                    <v-alert
+                        closable
+                        title="Skill name already exists"
+                        type="error"
+                        variant="outlined"
+                    ></v-alert>
+                </div>
                 <v-row class="flex-1-1-100 ma-2 pa-2">
                     <v-card-actions>
                         <v-btn color="success" @click="addSkills">Save</v-btn>
@@ -93,7 +107,10 @@ export default {
             overlay: false,
             delete_overlay: false,
             name: "",
-            status: ""
+            status: "",
+            unavail_names: [],
+            name_exists: false,
+            search: ""
         }
     }, 
     computed: {
@@ -104,26 +121,40 @@ export default {
             axios.get('http://localhost:8000/skills')
             .then(response => {
                 this.skills = response.data.items;
-                console.log(this.skills);
+                this.unavail_names = this.skills.map(skills => skills.skill_name);
             })
             .catch(error => {
                 console.log(error);
             })
         },
+        searchSkills() {
+            let result = this.skills.filter(skill => {
+                return skill.skill_name.toLowerCase().includes(this.search.toLowerCase());
+            });
+            return result;
+        },
+        clearSearch() {
+            this.search = "";
+        },
         addSkills() {
-            axios.post('http://localhost:8000/skills/create', {
-                skill_id: this.skills.length + 1,
-                skill_name: this.name,
-                skill_status: this.status
-            })
-            .then(response => {
-                console.log(response);
-                window.location.reload();
-            })
-            .catch(error => {
-                console.log(this.status)
-                console.log(error);
-            })
+            if (this.unavail_names.includes(this.name)) {
+                this.name_exists = true;
+            } else {
+                this.name_exists = false;
+                axios.post('http://localhost:8000/skills/create', {
+                    skill_id: this.skills.slice(-1)[0].skill_id + 1,
+                    skill_name: this.name,
+                    skill_status: this.status
+                })
+                .then(response => {
+                    console.log(response);
+                    window.location.reload();
+                })
+                .catch(error => {
+                    console.log(skill_id)
+                    console.log(error);
+                })
+            }
         }
         // add delete function here
     },
