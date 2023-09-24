@@ -90,7 +90,7 @@
                 <v-row class="flex-1-1-100 ma-2 pa-2">
                     <v-card-actions>
                         <v-btn color="success" @click="addSkills">Save</v-btn>
-                        <v-btn color="grey" @click="overlay = false">Cancel</v-btn>
+                        <v-btn color="grey" @click="overlay = false, name = '', status = '', name_exists=false">Cancel</v-btn>
                     </v-card-actions>
                 </v-row>
             </v-card>
