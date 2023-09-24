@@ -176,12 +176,12 @@ export default {
     },
 
     closeForm() {
-      this.roleListingId = null;
-      this.roleId = null;
-      this.roleListingSource = null;
-      this.roleListingDesc = null;
-      this.roleListingOpen = null;
-      this.roleListingClose = null;
+      this.roleListingId = "";
+      this.roleId = "";
+      this.roleListingSource = "";
+      this.roleListingDesc = "";
+      this.roleListingOpen = "";
+      this.roleListingClose = "";
       this.errorMessage = "";
       this.createdSuccess = false;
 
