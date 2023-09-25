@@ -5,14 +5,13 @@
         <p class="text-h5 py-3">Role Listings</p>
       </v-col>
       <v-col>
-        <v-text-field
-          rounded
-          density="compact"
-          variant="outlined"
-          placeholder="Search Role Listing..."
-          append-inner-icon="mdi-magnify"
-        >
+        <v-text-field v-model="search" variant="outlined" placeholder="Search Role Listing...">
         </v-text-field>
+      </v-col>
+      <v-col>
+        <v-btn color="primary" @click="searchRoleListings">
+          Search
+        </v-btn>
       </v-col>
     </v-row>
 
@@ -22,11 +21,81 @@
       <p class="text-h6">Search Results</p>
       <v-spacer></v-spacer>
       <v-btn color="primary">
-        + Create Role Listing <CreateRoleListingDialog />
+        + Create Role Listing
+        <CreateRoleListingDialog />
       </v-btn>
+    </div>
+    <div>
+      <v-table>
+        <thead>
+          <tr>
+            <th class="text-h6">
+              Role
+            </th>
+            <th class="text-h6">
+              Description
+            </th>
+            <th class="text-h6">
+              Listing Open
+            </th>
+            <th class="text-h6">
+              Listing Close
+            </th>
+          </tr>
+        </thead>
+        <tr v-for="listing in roleListings">
+          <td class="text-h6">{{ listing.role_id }}</td>
+          <td class="text-h6">{{ listing.role_listing_desc ? listing.role_listing_desc : 'No Description' }}</td>
+          <td class="text-h6">{{ listing.role_listing_open }}</td>
+          <td class="text-h6">{{ listing.role_listing_close }}</td>
+        </tr>
+      </v-table>
     </div>
   </v-container>
 </template>
-<script setup>
+
+<script>
 import CreateRoleListingDialog from "@/components/CreateRoleListingDialog.vue";
+import { getRoleListing } from "@/api/api.js";
+import axios from "axios";
+
+export default {
+  data() {
+    return {
+      roleListings: [],
+      search: "",
+      page: 1,
+      size: null,
+    }
+  },
+  methods: {
+    fetchRoleListings(queryParams) {
+      axios.get(getRoleListing, { params: queryParams })
+        .then((response) => {
+          this.roleListings = response.data.items;
+        })
+        .catch((error) => {
+          console.error('Error fetching role listings:', error);
+        });
+    },
+    getRoleListings() {
+      const queryParams = {
+        page: this.page || 1,
+        size: this.size
+      };
+      this.fetchRoleListings(queryParams);
+    },
+    searchRoleListings() {
+      const queryParams = {
+        page: this.page || 1,
+        size: this.size,
+        filter: this.search,
+      };
+      this.fetchRoleListings(queryParams);
+    }
+  },
+  mounted() {
+    this.getRoleListings();
+  },
+}
 </script>
