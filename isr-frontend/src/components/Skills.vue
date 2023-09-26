@@ -33,7 +33,7 @@
                 <v-col cols="4">
                     <v-card width="350">
                         <v-row>
-                            <v-col cols="6">
+                            <v-col cols="8">
                                 <v-card-title>{{ skill.skill_name }}</v-card-title>
                             </v-col>
                             <v-col>
@@ -43,9 +43,9 @@
                             </v-col> 
                         </v-row>
 
-                        <v-row>
+                        <v-row class="mb-1">
                             <v-col cols="6">
-                                <v-card-subtitle>{{ skill.skill_status }}</v-card-subtitle>
+                                <v-card-subtitle>Status: {{ skill.skill_status }}</v-card-subtitle>
                             </v-col>
                             <v-col>
                                 <!-- add delete button here -->
