@@ -5,13 +5,15 @@
         <p class="text-h5 py-3">Role Listings</p>
       </v-col>
       <v-col>
-        <v-text-field v-model="search" variant="outlined" placeholder="Search Role Listing...">
+        <v-text-field
+          v-model="search"
+          variant="outlined"
+          placeholder="Search Role Listing..."
+        >
         </v-text-field>
       </v-col>
       <v-col>
-        <v-btn color="primary" @click="searchRoleListings">
-          Search
-        </v-btn>
+        <v-btn color="primary" @click="searchRoleListings"> Search </v-btn>
       </v-col>
     </v-row>
 
@@ -29,23 +31,21 @@
       <v-table>
         <thead>
           <tr>
-            <th class="text-h6">
-              Role
-            </th>
-            <th class="text-h6">
-              Description
-            </th>
-            <th class="text-h6">
-              Listing Open
-            </th>
-            <th class="text-h6">
-              Listing Close
-            </th>
+            <th class="text-h6">Role</th>
+            <th class="text-h6">Description</th>
+            <th class="text-h6">Listing Open</th>
+            <th class="text-h6">Listing Close</th>
           </tr>
         </thead>
-        <tr v-for="listing in roleListings">
+        <tr v-for="(listing, index) in roleListings" :key="index">
           <td class="text-h6">{{ listing.role_id }}</td>
-          <td class="text-h6">{{ listing.role_listing_desc ? listing.role_listing_desc : 'No Description' }}</td>
+          <td class="text-h6">
+            {{
+              listing.role_listing_desc
+                ? listing.role_listing_desc
+                : "No Description"
+            }}
+          </td>
           <td class="text-h6">{{ listing.role_listing_open }}</td>
           <td class="text-h6">{{ listing.role_listing_close }}</td>
         </tr>
@@ -60,28 +60,32 @@ import { getRoleListing } from "@/api/api.js";
 import axios from "axios";
 
 export default {
+  components: {
+    CreateRoleListingDialog,
+  },
   data() {
     return {
       roleListings: [],
       search: "",
       page: 1,
       size: null,
-    }
+    };
   },
   methods: {
     fetchRoleListings(queryParams) {
-      axios.get(getRoleListing, { params: queryParams })
+      axios
+        .get(getRoleListing, { params: queryParams })
         .then((response) => {
           this.roleListings = response.data.items;
         })
         .catch((error) => {
-          console.error('Error fetching role listings:', error);
+          console.error("Error fetching role listings:", error);
         });
     },
     getRoleListings() {
       const queryParams = {
         page: this.page || 1,
-        size: this.size
+        size: this.size,
       };
       this.fetchRoleListings(queryParams);
     },
@@ -92,10 +96,10 @@ export default {
         filter: this.search,
       };
       this.fetchRoleListings(queryParams);
-    }
+    },
   },
   mounted() {
     this.getRoleListings();
   },
-}
+};
 </script>
