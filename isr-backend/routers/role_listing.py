@@ -37,7 +37,7 @@ def get_all_listings(db: db_dependency, listing_id: int | None = None, filter: s
     
     if res.count() == 0:
             raise HTTPException(status_code=404, detail="No listings found")     
-    
+
     return paginate(res)
 
 
@@ -74,5 +74,4 @@ def create_listings(listing: RoleListingCreate, db: db_dependency):
         print(e)
 
         raise HTTPException(status_code=500, detail="Error creating listing! Please ensure the following are correct: <br>1. Role ID exists <br>2. Role Source exists <br>3. Role Listing ID is unique")
-
 

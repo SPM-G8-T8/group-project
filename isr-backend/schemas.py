@@ -3,6 +3,13 @@ from datetime import date, datetime
 from enum import Enum
 from typing import Optional, Union
 
+
+class RoleDetails(BaseModel):
+    role_id: int
+    role_name: str
+    role_description: str
+    role_status: str
+
 class RoleListingBase(BaseModel):
     role_id: int
     role_listing_desc: str
@@ -26,6 +33,7 @@ class RoleListingRead(RoleListingBase):
     role_listing_updater: Optional[int]
     role_listing_ts_create: datetime
     role_listing_ts_update: Optional[datetime]
+    role: RoleDetails
 
 class SkillDetailsBase(BaseModel):
     skill_id: int

@@ -2,6 +2,7 @@ from sqlalchemy import Column, ForeignKey, String, Integer, Date, DateTime, Enum
 from sqlalchemy.sql import func
 from database import Base
 
+from sqlalchemy.orm import relationship
 
 class StaffDetails(Base):
     __tablename__ = 'staff_details'
@@ -78,6 +79,7 @@ class RoleListings(Base):
     role_listing_ts_create = Column(DateTime(timezone=True), server_default=func.now())
     role_listing_ts_update = Column(DateTime(timezone=True), onupdate=func.now())
 
+    role = relationship("RoleDetails", backref="role_listings")
 
 class RoleApplications(Base):
     __tablename__ = 'role_applications'
