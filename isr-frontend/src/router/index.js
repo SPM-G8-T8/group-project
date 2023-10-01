@@ -20,6 +20,11 @@ const routes = [
         name: "RoleListing",
         component: () => import("@/views/RoleListing.vue"),
       },
+      {
+        path: "view-listing",
+        name: "ViewListing",
+        component: () => import("@/views/ViewListing.vue"),
+      },
     ],
   },
   {
