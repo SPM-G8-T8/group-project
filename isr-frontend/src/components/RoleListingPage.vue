@@ -35,6 +35,7 @@
             <th class="text-h6">Description</th>
             <th class="text-h6">Listing Open</th>
             <th class="text-h6">Listing Close</th>
+            <th class="text-h6">Applicants</th>
           </tr>
         </thead>
         <tr v-for="(listing, index) in roleListings" :key="index">
@@ -48,6 +49,7 @@
           </td>
           <td class="text-h6">{{ listing.role_listing_open }}</td>
           <td class="text-h6">{{ listing.role_listing_close }}</td>
+          <td class="text-h6 py-1"><v-btn color="blue">View applicants</v-btn></td>
         </tr>
       </v-table>
     </div>
