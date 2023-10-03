@@ -35,6 +35,7 @@
             <th class="text-h6">Description</th>
             <th class="text-h6">Listing Open</th>
             <th class="text-h6">Listing Close</th>
+            <th class="text-h6">Actions</th>
             <th class="text-h6">Applicants</th>
           </tr>
         </thead>
