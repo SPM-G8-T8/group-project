@@ -13,6 +13,7 @@
           append-inner-icon="mdi-magnify"
           rounded
           @update:model-value="searchRoleListings"
+          clearable
         >
         </v-text-field>
       </v-col>
