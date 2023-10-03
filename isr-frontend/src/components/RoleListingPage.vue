@@ -40,20 +40,20 @@
           </tr>
         </thead>
         <tr v-for="(listing, index) in roleListings" :key="index">
-          <td class="text-h6">{{ listing.role_id }}</td>
-          <td class="text-h6">
+          <td class="text-h6 pl-4">{{ listing.role_id }}</td>
+          <td class="text-h6 pl-4">
             {{
               listing.role_listing_desc
                 ? listing.role_listing_desc
                 : "No Description"
             }}
           </td>
-          <td class="text-h6">{{ listing.role_listing_open }}</td>
-          <td class="text-h6">{{ listing.role_listing_close }}</td>
-          <td><v-btn color="grey" class="my-2 mx-3">Edit
+          <td class="text-h6 pl-4">{{ listing.role_listing_open }}</td>
+          <td class="text-h6 pl-4">{{ listing.role_listing_close }}</td>
+          <td><v-btn color="grey" class="my-2 ml-4">Edit
             <EditRoleListingDialog />
           </v-btn></td>
-          <td class="text-h6 py-1"><v-btn color="blue">View applicants</v-btn></td>
+          <td class="text-h6"><v-btn color="blue">View applicants</v-btn></td>
         </tr>
       </v-table>
     </div>
