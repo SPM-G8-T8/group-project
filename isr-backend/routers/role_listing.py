@@ -85,4 +85,26 @@ def create_listings(listing: RoleListingCreate, db: db_dependency):
 
         raise HTTPException(status_code=500, detail="Error creating listing! Please ensure the following are correct: <br>1. Role ID exists <br>2. Role Source exists <br>3. Role Listing ID is unique")
     
-    
+@router.put("/edit/{listing_id}")
+def edit_listing(listing_id: int, listing: RoleListingUpdate, db: db_dependency,):
+    res = db.query(models.RoleListings) \
+        .join(models.RoleDetails) \
+        .filter(models.RoleDetails.role_status == "active",
+                models.RoleDetails.role_id == models.RoleListings.role_id,
+                models.RoleListings.role_listing_id == listing_id).first()
+
+    if not res:
+        raise HTTPException(status_code=404, detail="Listing not found")
+    else: 
+        try:
+            listing_data = listing.dict(exclude_unset=True)
+            for key,value in listing_data.items():
+                setattr(res, key,value)
+            db.add(res)
+            db.commit()
+
+            return {"message": "Listing edited", "listing": jsonable_encoder(listing_data)}
+        
+        except SQLAlchemyError as e:
+            print(e)
+            raise HTTPException(status_code=500, detail="Error editing listing.")
