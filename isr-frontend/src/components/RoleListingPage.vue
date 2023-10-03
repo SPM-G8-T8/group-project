@@ -40,8 +40,8 @@
           </tr>
         </thead>
         <tr v-for="(listing, index) in roleListings" :key="index">
-          <td class="text-h6">{{ listing.role_id }}</td>
-          <td class="text-h6">
+          <td class="text-h6 pl-4">{{ listing.role_id }}</td>
+          <td class="text-h6 pl-4">
             {{
               listing.role_listing_desc
                 ? listing.role_listing_desc
