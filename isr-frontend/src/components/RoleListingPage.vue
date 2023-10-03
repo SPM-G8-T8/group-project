@@ -35,6 +35,7 @@
             <th class="text-h6">Description</th>
             <th class="text-h6">Listing Open</th>
             <th class="text-h6">Listing Close</th>
+            <th class="text-h6">Actions</th>
           </tr>
         </thead>
         <tr v-for="(listing, index) in roleListings" :key="index">
@@ -48,6 +49,9 @@
           </td>
           <td class="text-h6">{{ listing.role_listing_open }}</td>
           <td class="text-h6">{{ listing.role_listing_close }}</td>
+          <td><v-btn class="my-2 mx-3">Edit
+            <EditRoleListingDialog />
+          </v-btn></td>
         </tr>
       </v-table>
     </div>
@@ -56,12 +60,14 @@
 
 <script>
 import CreateRoleListingDialog from "@/components/CreateRoleListingDialog.vue";
+import EditRoleListingDialog from "@/components/EditRoleListingDialog.vue";
 import { getRoleListing } from "@/api/api.js";
 import axios from "axios";
 
 export default {
   components: {
     CreateRoleListingDialog,
+    EditRoleListingDialog
   },
   data() {
     return {
