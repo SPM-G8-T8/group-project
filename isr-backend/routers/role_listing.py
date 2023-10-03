@@ -5,9 +5,10 @@ from fastapi.encoders import jsonable_encoder
 from database import get_db
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
-from typing import Annotated
+from typing import Annotated, Optional
 from schemas import RoleListingCreate, RoleListingRead, RoleListingUpdate
 import models
+import datetime
 import json
 
 
@@ -26,12 +27,21 @@ db_dependency = Annotated[Session, Depends(get_db)]
 
 
 @router.get("/", response_model=Page[RoleListingRead])
-def get_all_listings(db: db_dependency, listing_id: int | None = None, filter: str | None = None):
+def get_all_listings(db: db_dependency,  
+                     filter: str | None = None,
+                     hide_expired: Optional[bool] = True
+                     ):
     
     res = db.query(models.RoleListings) \
     .join(models.RoleDetails) \
     .filter(models.RoleDetails.role_status == "active",
             models.RoleDetails.role_id == models.RoleListings.role_id)
+    
+    if hide_expired:
+        today = datetime.datetime.now().date()
+        res = res.filter(models.RoleListings.role_listing_close >= today, models.RoleListings.role_listing_open <= today) 
+
+
     if filter:
         res = res.filter(models.RoleListings.role_listing_desc.contains(filter))
     

@@ -5,11 +5,7 @@
         <p class="text-h5 py-3">Role Listings</p>
       </v-col>
       <v-col>
-        <v-text-field
-          v-model="search"
-          variant="outlined"
-          placeholder="Search Role Listing..."
-        >
+        <v-text-field v-model="search" variant="outlined" placeholder="Search Role Listing...">
         </v-text-field>
       </v-col>
       <v-col>
@@ -44,8 +40,8 @@
           <td class="text-h6 pl-4">
             {{
               listing.role_listing_desc
-                ? listing.role_listing_desc
-                : "No Description"
+              ? listing.role_listing_desc
+              : "No Description"
             }}
           </td>
           <td class="text-h6 pl-4">{{ listing.role_listing_open }}</td>
@@ -57,6 +53,18 @@
         </tr>
       </v-table>
     </div>
+    <div>
+      <v-btn :disabled="!hasPrev" @click="prevPage">prev page</v-btn>
+
+      <v-btn @click="goToPage(i)" :disabled="i === page" v-for="i in range(Math.max(1, page - 2), Math.min(totalPages, page + 2))">
+        {{ i }}
+      </v-btn>
+
+      <v-btn :disabled="!hasNext" @click="nextPage">next page</v-btn>
+
+      <p>Total Pages: {{ totalPages }}</p>
+      <p>Total Listings: {{ total }}</p>
+    </div>
   </v-container>
 </template>
 
@@ -65,6 +73,7 @@ import CreateRoleListingDialog from "@/components/CreateRoleListingDialog.vue";
 import EditRoleListingDialog from "@/components/EditRoleListingDialog.vue";
 import { getRoleListing } from "@/api/api.js";
 import axios from "axios";
+
 
 export default {
   components: {
@@ -76,8 +85,18 @@ export default {
       roleListings: [],
       search: "",
       page: 1,
-      size: null,
+      size: 2,
+      total: null,
+      totalPages: 1,
     };
+  },
+  computed: {
+    hasNext() {
+      return this.page < this.totalPages;
+    },
+    hasPrev() {
+      return this.page > 1;
+    }
   },
   methods: {
     fetchRoleListings(queryParams) {
@@ -85,6 +104,9 @@ export default {
         .get(getRoleListing, { params: queryParams })
         .then((response) => {
           this.roleListings = response.data.items;
+          this.page = response.data.page;
+          this.total = response.data.total;
+          this.totalPages = response.data.pages;
         })
         .catch((error) => {
           console.error("Error fetching role listings:", error);
@@ -94,6 +116,7 @@ export default {
       const queryParams = {
         page: this.page || 1,
         size: this.size,
+        hide_expired: false,
       };
       this.fetchRoleListings(queryParams);
     },
@@ -105,6 +128,25 @@ export default {
       };
       this.fetchRoleListings(queryParams);
     },
+    range(start, end) {
+      const result = [];
+      for (let i = start; i <= end; i++) {
+        result.push(i);
+      }
+      return result;
+    },
+    nextPage() {
+      this.page++;
+      this.fetchRoleListings({ page: this.page, size: this.size, hide_expired: false });
+    },
+    prevPage() {
+      this.page--;
+      this.fetchRoleListings({ page: this.page, size: this.size, hide_expired: false });
+    },
+    goToPage(page) {
+      this.fetchRoleListings({ page: page, size: this.size, hide_expired: false });
+
+    }
   },
   mounted() {
     this.getRoleListings();
