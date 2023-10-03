@@ -25,18 +25,18 @@ const routes = [
         name: "ViewListing",
         component: () => import("@/views/ViewListing.vue"),
       },
-    ],
-  },
-  {
-    path: "/skills",
-    children: [
       {
-        path: "",
+        path: "skills",
         name: "Skills",
         component: () => import("@/views/Skills.vue"),
       },
+      {
+        path: "view-applicants",
+        name: "ViewApplicants",
+        component: () => import("@/views/ViewApplicants.vue"),
+      },
     ],
-  },
+  }
 ];
 
 const router = createRouter({
