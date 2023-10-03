@@ -43,10 +43,7 @@ def get_all_listings(db: db_dependency,
 
 
     if filter:
-        res = res.filter(models.RoleListings.role_listing_desc.contains(filter))
-    
-    if res.count() == 0:
-            raise HTTPException(status_code=404, detail="No listings found")     
+        res = res.filter(models.RoleListings.role_listing_desc.contains(filter))    
 
     return paginate(res)
 
