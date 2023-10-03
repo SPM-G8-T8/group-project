@@ -19,7 +19,7 @@
 
     <v-divider></v-divider>
 
-    <div class="d-flex flex-row mt-7">
+    <div class="d-flex flex-row mt-7 mr-10 mb-5">
       <p class="text-h6">Search Results</p>
       <v-spacer></v-spacer>
       <v-btn color="primary">
@@ -50,7 +50,7 @@
           </td>
           <td class="text-h6">{{ listing.role_listing_open }}</td>
           <td class="text-h6">{{ listing.role_listing_close }}</td>
-          <td><v-btn class="my-2 mx-3">Edit
+          <td><v-btn color="grey" class="my-2 mx-3">Edit
             <EditRoleListingDialog />
           </v-btn></td>
           <td class="text-h6 py-1"><v-btn color="blue">View applicants</v-btn></td>
