@@ -20,15 +20,26 @@
 
     <v-divider></v-divider>
 
-    <div class="d-flex flex-row mt-7">
-      <p class="text-h6">Search Results</p>
+    <div class="d-flex flex-row mt-5">
+      <p class="text-h6">Search Results ({{ total }})</p>
       <v-spacer></v-spacer>
     </div>
     <div class="my-3">
-      <RoleListingCard
-        v-for="(listing, index) in roleListings"
-        :key="index"
-        :roleListing="listing"
+      <v-row>
+        <v-col
+          cols="12"
+          sm="6"
+          lg="4"
+          v-for="(listing, index) in roleListings"
+          :key="index"
+        >
+          <RoleListingCard :roleListing="listing" />
+        </v-col>
+      </v-row>
+      <PaginationToolBar
+        :page="page"
+        :totalPages="totalPages"
+        @change-page="changePage"
       />
     </div>
   </v-container>
@@ -37,11 +48,13 @@
 <script>
 import { getRoleListing } from "@/api/api.js";
 import RoleListingCard from "@/components/RoleListingCard.vue";
+import PaginationToolBar from "@/components/PaginationToolBar.vue";
 import axios from "axios";
 
 export default {
   components: {
     RoleListingCard,
+    PaginationToolBar,
   },
   data() {
     return {
@@ -49,6 +62,8 @@ export default {
       search: "",
       page: 1,
       size: null,
+      total: 0,
+      totalPages: 1,
     };
   },
   methods: {
@@ -58,7 +73,10 @@ export default {
       axios
         .get(getRoleListing, { params: queryParams })
         .then((response) => {
+          console.log(response.data.total);
           this.roleListings = response.data.items;
+          this.total = response.data.total;
+          this.totalPages = response.data.pages;
         })
         .catch((error) => {
           console.error("Error fetching role listings:", error);
@@ -68,6 +86,7 @@ export default {
       const queryParams = {
         page: this.page || 1,
         size: this.size,
+        hide_expired: true,
       };
       this.fetchRoleListings(queryParams);
     },
@@ -78,6 +97,15 @@ export default {
         filter: this.search,
       };
       this.fetchRoleListings(queryParams);
+    },
+    changePage(newPage) {
+      this.page = newPage;
+
+      this.fetchRoleListings({
+        page: this.page,
+        size: this.size,
+        hide_expired: false,
+      });
     },
   },
   mounted() {
