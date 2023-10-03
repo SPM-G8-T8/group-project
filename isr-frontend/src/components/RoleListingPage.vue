@@ -1,19 +1,21 @@
 <template>
   <v-container>
     <v-row>
-      <v-col>
+      <v-col  cols="12" lg="4">
         <p class="text-h5 py-3">Role Listings</p>
       </v-col>
-      <v-col>
+      <v-col cols="12" lg="8">
         <v-text-field
           v-model="search"
           variant="outlined"
           placeholder="Search Role Listing..."
+          density="compact"
+          append-inner-icon="mdi-magnify"
+          rounded
+          @update:model-value="searchRoleListings"
+          clearable
         >
         </v-text-field>
-      </v-col>
-      <v-col>
-        <v-btn color="primary" @click="searchRoleListings"> Search </v-btn>
       </v-col>
     </v-row>
 
