@@ -10,9 +10,9 @@
           variant="outlined"
           placeholder="Search Role Listing..."
           density="compact"
-          append-inner-icon="mdi-magnify"
+          append-icon="mdi-magnify"
           rounded
-          @update:model-value="searchRoleListings"
+          @click:append="searchRoleListings"
           clearable
         >
         </v-text-field>
