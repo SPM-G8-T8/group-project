@@ -73,6 +73,16 @@ def get_all_employees(db: db_dependency, employee_id: int | None = None, filter:
     
     return paginate(staffSkills)
 
+@router.get("/staffSkills/{staff_id}", response_model=Page[StaffSkillsRead])
+def get_staff_skills(staff_id: int, db: db_dependency):
+    # Fetch all staff skills
+    staffSkills = db.query(models.StaffSkills).filter(models.StaffSkills.staff_id == staff_id)
+    if not staffSkills:
+        print(f"===== EMPLOYEES DUMP {staffSkills} =====")
+        raise HTTPException(status_code=204, detail="No staff skills found")
+    
+    return paginate(staffSkills)
+
 @router.post("/addStaffSkills", response_model=StaffSkillsRead)
 def create_staff_skill(staff_skill: StaffSkillsCreate, db: Session = Depends(get_db)):
     # Create a new StaffSkills object using the data provided in the request

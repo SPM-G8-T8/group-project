@@ -6,3 +6,5 @@ export const editRoleListing = rootURL + "/listing/edit";
 
 export const getSkills = rootURL + "/skills";
 export const createSkills = rootURL + "/skills/create";
+
+export const matchSkills = rootURL + "/matching-percentage";
