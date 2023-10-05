@@ -48,3 +48,16 @@ class SkillDetailsUpdate(SkillDetailsBase):
 
 class SkillDetailsRead(SkillDetailsBase):
     pass
+
+class RoleApplicationBase(BaseModel):
+    role_app_id: int
+    role_listing_id: int
+    staff_id: int
+    role_app_ts_create: datetime
+    role_app_status: str
+
+class RoleApplicationCreate(RoleApplicationBase):
+    pass
+
+class RoleApplicationRead(RoleApplicationBase):
+    pass
