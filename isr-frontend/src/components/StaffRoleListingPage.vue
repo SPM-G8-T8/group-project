@@ -34,7 +34,7 @@
           v-for="(listing, index) in roleListings"
           :key="index"
         >
-          <RoleListingCard :roleListing="listing" :staffId="staff_id" />
+          <RoleListingCard :roleListing="listing" />
         </v-col>
       </v-row>
       <PaginationToolBar
@@ -65,7 +65,6 @@ export default {
       size: null,
       total: 0,
       totalPages: 1,
-      staff_id: "",
     };
   },
   methods: {
@@ -112,7 +111,6 @@ export default {
   },
   mounted() {
     this.getRoleListings();
-    this.staff_id = window.sessionStorage.getItem("staff_id");
   },
 };
 </script>

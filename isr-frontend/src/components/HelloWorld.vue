@@ -1,87 +1,31 @@
 <template>
   <v-container class="fill-height">
     <v-responsive class="align-center text-center fill-height">
-      <v-img height="300" src="@/assets/challenge.png" />
+      <v-img height="300" src="@/assets/logo.svg" />
 
-      <div class="text-h4 font-weight-light mb-n1">All-In-One</div>
-      <div class="py-1" />
+      <div class="text-body-2 font-weight-light mb-n1">Welcome to</div>
 
-      <h1 class="text-h3 font-weight-bold"> Skill-based Role Portal</h1>
+      <h1 class="text-h2 font-weight-bold">Vuetify</h1>
 
-      <div class="py-3" />
-      <v-card class="mx-auto px-6 py-8" max-width="344">
-      <v-form
-        v-model="form"
-        @submit.prevent="onSubmit"
-      >
-        <v-text-field
-          v-model="username"
-          :readonly="loading"
-          :rules="[required]"
-          class="mb-2"
-          clearable
-          label="Email"
-        ></v-text-field>
+      <div class="py-14" />
 
-        <v-text-field
-          v-model="password"
-          :readonly="loading"
-          :rules="[required]"
-          clearable
-          label="Password"
-          placeholder="Enter your password"
-        ></v-text-field>
+      <v-row class="d-flex align-center justify-center">
+        <v-col cols="auto">
+          <router-link :to="{ path: '/role-listing' }">
+            <v-btn color="primary"> HR Role Listings </v-btn>
+          </router-link>
+        </v-col>
 
-        <br>
-
-        <v-btn
-          :disabled="!form"
-          :loading="loading"
-          block
-          color="info"
-          size="large"
-          type="submit"
-          variant="elevated"
-        >
-          Sign In
-        </v-btn>
-      </v-form>
-    </v-card>
+        <v-col cols="auto">
+          <router-link :to="{ path: '/view-listing' }">
+            <v-btn color="primary"> Staff Role Listings </v-btn>
+          </router-link>
+        </v-col>
+      </v-row>
     </v-responsive>
   </v-container>
 </template>
 
-<script>
- export default {
-    data: () => ({
-      form: false,
-      username: null,
-      password: null,
-      loading: false,
-    }),
-
-    methods: {
-      onSubmit () {
-        if (!this.form) return
-
-        this.loading = true
-
-        setTimeout(() => (this.loading = false), 2000)
-        const { username, password } = this;
-
-        if (username === "staff" && password === "staff1") {
-        this.$router.push("/view-listing")
-        alert("Staff successfully logged in.");
-      } else if (username === "hr" && password === "hr1") {
-        this.$router.push("/role-listing")
-        alert("HR successfully logged in.");
-      } else {
-        alert("Invalid credentials.");
-      }
-      },
-      required (v) {
-        return !!v || 'Field is required'
-      },
-    },
-  }
+<script setup>
+//
 </script>
