@@ -53,9 +53,8 @@
           <td class="text-center">{{ listing.role_listing_open }}</td>
           <td class="text-center">{{ listing.role_listing_close }}</td>
           <td class="text-center">
-            <v-btn color="grey" class="my-2 mx-3"
-              >Edit
-              <EditRoleListingDialog />
+            <v-btn color="grey" class="my-2 mx-3" @click="openEditDialog(listing.role_listing_id)">Edit
+              <EditRoleListingDialog :selectedListingId='listing.role_listing_id' />
             </v-btn>
           </td>
           <td class="text-center py-1">
@@ -93,6 +92,7 @@ export default {
       size: 2,
       total: null,
       totalPages: 1,
+      selectedListingId: null
     };
   },
   computed: {
@@ -141,6 +141,10 @@ export default {
         size: this.size,
         hide_expired: false,
       });
+    },
+    openEditDialog(listingId) {
+      this.selectedListingId = listingId;
+      console.log(this.selectedListingId + " printed")
     },
   },
   mounted() {

@@ -14,7 +14,7 @@
                                 density="compact"
                                 hide-details="auto"
                                 v-model="roleListingId"
-                                disabled=True
+                                
                                 :rules="[rules.required, rules.number]"
                             ></v-text-field>
                         </v-col>
@@ -25,7 +25,7 @@
                                 density="compact"
                                 hide-details="auto"
                                 v-model="roleId"
-                                disabled=True
+                                
                                 :rules="[rules.required, rules.number]"
                             >
                             </v-text-field>
@@ -99,17 +99,22 @@
                 text
                 @click="editRoleList"
                 :disabled="!isFormValid"
-                v-if="!createdSuccess"
+                v-if="!editSuccess"
                 >
-                Create
+                Update
                 </v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
 </template>
 <script>
+import axios from "axios";
+import { editRoleListing, getRoleListing } from "@/api/api.js";
 
 export default {
+  props: {
+    selectedListingId: Number,
+},
   data() {
     return {
       dialog: false,
@@ -130,8 +135,35 @@ export default {
     };
   },
 
-  methods: {
+  watch: {
+    dialog(newVal){
+        console.log("showDialog")
+        if (newVal) {
+            this.fetchListingDetails();
+        }
+    }
+  },
 
+  methods: {    
+    fetchListingDetails(){
+        console.log("fetchlisting")
+        this.roleListingId = this.selectedListingId;
+        axios.get(`${getRoleListing}/${this.selectedListingId}`)
+        .then(response => {
+            this.roleId = response.data.role_id
+            this.roleListingSource = response.data.role_listing_source
+            this.roleListingDesc = response.data.role_listing_desc
+            this.roleListingOpen = response.data.role_listing_open
+            this.roleListingClose = response.data.role_listing_close
+        })
+        .catch(error=>{
+            console.log(error)
+        })
+    },
+
+    editRoleList(){
+
+    },
     closeDialog(){
         this.dialog = false;
     }
