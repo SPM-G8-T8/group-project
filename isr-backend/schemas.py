@@ -78,7 +78,7 @@ class RoleApplicationsBase(BaseModel):
 class RoleApplicationsRead(RoleApplicationsBase):
     pass
 
-class RoleApplicationCreate(RoleApplicationBase):
+class RoleApplicationCreate(RoleApplicationsBase):
     pass
 
 class StaffDetailsBase(BaseModel):

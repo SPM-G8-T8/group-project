@@ -6,7 +6,7 @@ from database import get_db
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from typing import Annotated, Optional
-from schemas import RoleApplicationBase, RoleApplicationCreate, RoleApplicationRead
+from schemas import RoleApplicationsBase, RoleApplicationCreate, RoleApplicationsRead
 import models
 import datetime
 import json
@@ -15,7 +15,7 @@ router = APIRouter()
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
-@router.get("/application", response_model=Page[RoleApplicationRead])
+@router.get("/application", response_model=Page[RoleApplicationsRead])
 def get_all_applications(db: db_dependency, role_app_id: int | None = None, filter: str | None = None):
     res = db.query(models.RoleApplications)
     if res.count() == 0:
