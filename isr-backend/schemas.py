@@ -78,6 +78,9 @@ class RoleApplicationsBase(BaseModel):
 class RoleApplicationsRead(RoleApplicationsBase):
     pass
 
+class RoleApplicationCreate(RoleApplicationBase):
+    pass
+
 class StaffDetailsBase(BaseModel):
     staff_id: int
     staff_fname: str
