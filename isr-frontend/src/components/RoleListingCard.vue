@@ -1,5 +1,5 @@
 <template>
-  <v-card class="my-5" color="blue-grey-lighten-5">
+  <v-card class="my-1" color="blue-grey-lighten-5">
     <v-card-title style="font-size: medium">
       {{ roleListing.role.role_name }}
       <v-card-subtitle class="d-flex font-italic align-center pa-0">
@@ -22,8 +22,8 @@
   </v-card>
 </template>
 <script>
-import { getSkillMatch } from '@/api/api';
-import axios from 'axios';
+import { getSkillMatch } from "@/api/api";
+import axios from "axios";
 
 export default {
   props: {
@@ -37,17 +37,19 @@ export default {
       employeeId: 1,
       match_skills: null,
     };
-
   },
   mounted() {
-    this.employeeId = window.sessionStorage.getItem("employeeId")? window.sessionStorage.getItem("employeeId") : 1; // for testing, default to 1
+    this.employeeId = window.sessionStorage.getItem("employeeId")
+      ? window.sessionStorage.getItem("employeeId")
+      : 1; // for testing, default to 1
     // this.employeeId = window.sessionStorage.getItem("employeeId")
     this.getMatchSkills(this.roleListing.role_listing_id);
   },
   methods: {
-    async getMatchSkills(roleId){
+    async getMatchSkills(roleId) {
       console.log(`${getSkillMatch}/${this.employeeId}/${roleId}`);
-      axios.get(`${getSkillMatch}/${this.employeeId}/${roleId}`)
+      axios
+        .get(`${getSkillMatch}/${this.employeeId}/${roleId}`)
         .then((response) => {
           console.log(JSON.stringify(response.data));
           this.match_skills = response.data.data.matching_percentage;
@@ -55,7 +57,7 @@ export default {
         .catch((error) => {
           console.log(JSON.stringify(error));
         });
-    }
+    },
   },
   computed: {},
 };

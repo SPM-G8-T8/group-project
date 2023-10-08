@@ -1,0 +1,29 @@
+from fastapi import APIRouter, HTTPException, Depends
+from fastapi.encoders import jsonable_encoder
+from database import get_db
+from sqlalchemy.orm import Session
+from sqlalchemy.exc import SQLAlchemyError
+from typing import Annotated, List
+from schemas import RoleDetails
+import models
+
+router = APIRouter(
+    prefix='/roles',
+    tags=['roles']
+)
+
+db_dependency = Annotated[Session, Depends(get_db)]
+
+@router.get("/", response_model=List[RoleDetails])
+def get_all_roles(db: db_dependency):
+
+    try:
+        res = db.query(models.RoleDetails).all()
+
+        for i in res:
+            print(i.__dict__)
+
+        return res
+    
+    except SQLAlchemyError as e:
+        return HTTPException(status_code=500, detail="Error retrieving roles")

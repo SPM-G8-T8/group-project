@@ -7,7 +7,7 @@ from typing import Optional, Union
 class RoleDetails(BaseModel):
     role_id: int
     role_name: str
-    role_description: str
+    role_description: Union[str, None] = None
     role_status: str
 
 class RoleListingBase(BaseModel):

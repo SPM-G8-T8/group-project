@@ -29,7 +29,8 @@ db_dependency = Annotated[Session, Depends(get_db)]
 @router.get("/", response_model=Page[RoleListingRead])
 def get_all_listings(db: db_dependency,  
                      filter: str | None = None,
-                     hide_expired: Optional[bool] = True
+                     hide_expired: Optional[bool] = True,
+                     role_filter: Optional[int] = None
                      ):
     
     res = db.query(models.RoleListings) \
@@ -43,7 +44,10 @@ def get_all_listings(db: db_dependency,
 
 
     if filter:
-        res = res.filter(models.RoleListings.role_listing_desc.contains(filter))    
+        res = res.filter(models.RoleListings.role_listing_desc.contains(filter))
+
+    if role_filter:
+        res = res.filter(models.RoleListings.role_id == role_filter)
 
     return paginate(res)
 

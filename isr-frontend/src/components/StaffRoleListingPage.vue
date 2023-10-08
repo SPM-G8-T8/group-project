@@ -14,6 +14,7 @@
           rounded
           @click:append="searchRoleListings"
           clearable
+          hide-details="auto"
         >
         </v-text-field>
       </v-col>
@@ -21,10 +22,26 @@
 
     <v-divider></v-divider>
 
-    <div class="d-flex flex-row mt-5">
-      <p class="text-h6">Search Results ({{ total }})</p>
+    <v-row class="my-3">
+      <v-col cols="12" lg="4">
+        <p class="text-h6">Search Results ({{ total }})</p>
+      </v-col>
       <v-spacer></v-spacer>
-    </div>
+      <v-col cols="12" lg="4">
+        <v-select
+          label="Filter By Role"
+          :items="roles"
+          item-title="role_name"
+          item-value="role_id"
+          variant="outlined"
+          density="compact"
+          hide-details="auto"
+          clearable
+          v-model="role_filter"
+          @update:model-value="searchRoleListings"
+        ></v-select>
+      </v-col>
+    </v-row>
     <div class="my-3">
       <v-row>
         <v-col
@@ -47,7 +64,7 @@
 </template>
 
 <script>
-import { getRoleListing } from "@/api/api.js";
+import { getRoleListing, getRoles } from "@/api/api.js";
 import RoleListingCard from "@/components/RoleListingCard.vue";
 import PaginationToolBar from "@/components/PaginationToolBar.vue";
 import axios from "axios";
@@ -65,6 +82,8 @@ export default {
       size: null,
       total: 0,
       totalPages: 1,
+      roles: [],
+      role_filter: null,
     };
   },
   methods: {
@@ -92,10 +111,13 @@ export default {
       this.fetchRoleListings(queryParams);
     },
     searchRoleListings() {
+      console.log("Searching Role Listings...");
       const queryParams = {
         page: this.page || 1,
         size: this.size,
+        hide_expired: true,
         filter: this.search,
+        role_filter: this.role_filter,
       };
       this.fetchRoleListings(queryParams);
     },
@@ -106,11 +128,25 @@ export default {
         page: this.page,
         size: this.size,
         hide_expired: false,
+        filter: this.search,
+        role_filter: this.role_filter,
       });
+    },
+    getRoles() {
+      axios
+        .get(getRoles)
+        .then((response) => {
+          console.log(response.data);
+          this.roles = response.data;
+        })
+        .catch((error) => {
+          console.error("Error fetching role listings:", error);
+        });
     },
   },
   mounted() {
     this.getRoleListings();
+    this.getRoles();
   },
 };
 </script>
