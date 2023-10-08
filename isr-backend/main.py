@@ -6,7 +6,7 @@ from database import get_db, engine
 from sqlalchemy.orm import Session
 from typing import Annotated
 
-from routers import role_listing, skill_details, skill_match, view_applicants, role_details, role_application
+from routers import role_listing, skill_details, skill_match, view_applicants, role_details, role_application, staff_details
 
 app = FastAPI()
 
@@ -26,6 +26,7 @@ app.include_router(skill_match.router)
 app.include_router(view_applicants.router)
 app.include_router(role_application.router)
 app.include_router(role_details.router)
+app.include_router(staff_details.router)
 
 
 add_pagination(app)

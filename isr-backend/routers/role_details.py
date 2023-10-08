@@ -27,3 +27,10 @@ def get_all_roles(db: db_dependency):
     
     except SQLAlchemyError as e:
         return HTTPException(status_code=500, detail="Error retrieving roles")
+    
+@router.get("/{role_id}", response_model=RoleDetails)
+def get_role(role_id: int, db: db_dependency):
+    role = db.query(models.RoleDetails).filter(models.RoleDetails.role_id == role_id).first()
+    if not role:
+        raise HTTPException(status_code=404, detail="Role not found")
+    return role

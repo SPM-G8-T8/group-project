@@ -93,3 +93,12 @@ class StaffDetailsBase(BaseModel):
 
 class StaffDetailsRead(StaffDetailsBase):
     pass
+
+class StaffRolesBase(BaseModel):
+    staff_id: int
+    staff_role: int
+    role_type: str
+    sr_status: str
+
+class StaffRolesRead(StaffRolesBase):
+    pass
