@@ -58,7 +58,7 @@
             </v-btn>
           </td>
           <td class="text-center py-1">
-            <v-btn color="blue">View applicants</v-btn>
+            <v-btn color="blue" @click="viewApplicants(listing.role_listing_id)">View applicants</v-btn>
           </td>
         </tr>
       </v-table>
@@ -145,6 +145,12 @@ export default {
     openEditDialog(listingId) {
       this.selectedListingId = listingId;
       console.log(this.selectedListingId + " printed")
+    },
+    viewApplicants(listingID) {
+      this.$router.push({
+        name: "ViewApplicants",
+        params: { listingID: listingID },
+      });
     },
   },
   mounted() {
