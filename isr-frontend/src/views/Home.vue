@@ -1,7 +1,7 @@
 <template>
-  <HelloWorld />
+  <StaffRoleListingPage />
 </template>
 
 <script setup>
-  import HelloWorld from '@/components/HelloWorld.vue'
+import StaffRoleListingPage from "@/components/StaffRoleListingPage.vue";
 </script>

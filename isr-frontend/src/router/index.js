@@ -31,12 +31,20 @@ const routes = [
         component: () => import("@/views/Skills.vue"),
       },
       {
-        path: "view-applicants",
+        path: "role-listing/:listingID",
         name: "ViewApplicants",
         component: () => import("@/views/ViewApplicants.vue"),
       },
     ],
-  }
+  },
+  {
+    path: "/login",
+    name: "Login",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "home" */ "@/views/Login.vue"),
+  },
 ];
 
 const router = createRouter({
