@@ -14,7 +14,7 @@
                                 density="compact"
                                 hide-details="auto"
                                 v-model="roleListingId"
-                                
+                                disabled
                                 :rules="[rules.required, rules.number]"
                             ></v-text-field>
                         </v-col>
@@ -25,7 +25,7 @@
                                 density="compact"
                                 hide-details="auto"
                                 v-model="roleId"
-                                
+                                disabled
                                 :rules="[rules.required, rules.number]"
                             >
                             </v-text-field>
@@ -91,6 +91,17 @@
                         </v-col>
                     </v-row>
                 </v-form>
+                <v-alert class="mt-3" type="warning" v-if="errorMessage.length > 0">
+                    <span v-html="errorMessage"> </span>
+                </v-alert>
+
+                <v-alert
+                    class="mt-3"
+                    type="success"
+                    v-if="editSuccess"
+                    text="Role Listing Successfully Edited!"
+                >
+                </v-alert>
             </v-card-text>
             <v-card-actions class="justify-center">
                 <v-btn color="primary" text @click="closeDialog"> Close </v-btn>
@@ -162,10 +173,37 @@ export default {
     },
 
     editRoleList(){
-
+        if (this.roleListingOpen > this.roleListingClose) {
+            this.errorMessage = "Open Date must be before Close Date.";
+        } else {
+            axios
+            .put(`${editRoleListing}/${this.selectedListingId}`,{
+                role_listing_source: this.roleListingSource,
+                role_listing_desc: this.roleListingDesc,
+                role_listing_open: this.roleListingOpen,
+                role_listing_close: this.roleListingClose,
+            })
+            .then((response) => {
+                console.log(response);
+                this.editSuccess = true;
+                // this.$router.go() // reload
+            })         
+            .catch((error) => {
+                console.log(error);
+                this.errorMessage = error.response.data.detail;
+            });
+        }
+ 
     },
+
     closeDialog(){
+        this.errorMessage = "";
         this.dialog = false;
+        if(this.editSuccess){
+            this.$router.go();
+        }
+        this.editSuccess = false;
+
     }
   }
 }

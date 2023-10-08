@@ -104,4 +104,4 @@ def edit_listing(listing_id: int, listing: RoleListingUpdate, db: db_dependency,
         
         except SQLAlchemyError as e:
             print(e)
-            raise HTTPException(status_code=500, detail="Error editing listing.")
+            raise HTTPException(status_code=500, detail="Error creating listing! Please ensure the following are correct: <br>1. Role ID exists <br>2. Role Source exists <br>3. Role Listing ID is unique")
