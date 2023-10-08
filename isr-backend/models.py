@@ -86,8 +86,8 @@ class RoleApplications(Base):
     __tablename__ = 'role_applications'
 
     role_app_id = Column(Integer, primary_key=True, index=True)
-    role_listing_id = Column(Integer)
-    staff_id = Column(Integer)
+    role_listing_id = Column(Integer, ForeignKey(RoleListings.role_listing_id))
+    staff_id = Column(Integer, ForeignKey(StaffDetails.staff_id))
     role_app_ts_create = Column(DateTime(timezone=True), server_default=func.now())
     role_app_status = Column(Enum("applied", "withdrawn", name="role_app_enum"))
 
