@@ -11,3 +11,6 @@ export const getSkillMatch = rootURL + "/matching-percentage";
 export const deactivateListing = rootURL + "/deactivate";
 
 export const getRoles = rootURL + "/roles";
+
+export const getRoleApplication = rootURL + "/application";
+export const createRoleApplication = rootURL + "/application/create";

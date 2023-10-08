@@ -35,6 +35,11 @@ const routes = [
         name: "ViewApplicants",
         component: () => import("@/views/ViewApplicants.vue"),
       },
+      {
+        path: "role-application",
+        name: "ApplyRole",
+        component: () => import("@/views/ApplyRole.vue"),
+      },
     ],
   },
   {
