@@ -31,7 +31,7 @@ const routes = [
         component: () => import("@/views/Skills.vue"),
       },
       {
-        path: "role-listing/:listingID",
+        path: "role-listing/:roleID/:listingID",
         name: "ViewApplicants",
         component: () => import("@/views/ViewApplicants.vue"),
       },
