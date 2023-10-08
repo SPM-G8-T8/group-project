@@ -53,6 +53,7 @@
           <td class="text-center">{{ listing.role_listing_open }}</td>
           <td class="text-center">{{ listing.role_listing_close }}</td>
           <td class="text-center">
+            <v-btn color="grey" class="my-2 mx-3" @click="deactivateListingBtn(listing.role_listing_id)">Deactivate</v-btn>
             <v-btn color="grey" class="my-2 mx-3" @click="openEditDialog(listing.role_listing_id)">Edit
               <EditRoleListingDialog :selectedListingId='listing.role_listing_id' />
             </v-btn>
@@ -75,7 +76,7 @@
 import CreateRoleListingDialog from "@/components/CreateRoleListingDialog.vue";
 import EditRoleListingDialog from "@/components/EditRoleListingDialog.vue";
 import PaginationToolBar from "./PaginationToolBar.vue";
-import { getRoleListing } from "@/api/api.js";
+import { getRoleListing, deactivateListing } from "@/api/api.js";
 import axios from "axios";
 
 export default {
@@ -152,6 +153,15 @@ export default {
         params: { listingID: listingID },
       });
     },
+    deactivateListingBtn(listingID) {
+      axios.patch(`${deactivateListing}/${listingID}`).then(() => {
+        // Reload the table to reflect the change
+        this.getRoleListings();
+      }).catch((err) => {
+        console.error(err);
+        // You may want to add error messages telling your user about the error
+      })
+    }
   },
   mounted() {
     this.getRoleListings();

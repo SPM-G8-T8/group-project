@@ -8,3 +8,4 @@ export const getSkills = rootURL + "/skills";
 export const createSkills = rootURL + "/skills/create";
 
 export const getSkillMatch = rootURL + "/matching-percentage";
+export const deactivateListing = rootURL + "/deactivate";
