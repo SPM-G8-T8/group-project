@@ -17,10 +17,11 @@ def calculate_matching_skills(staff_id: int, role_id: int, db: Session):
     role_skills = db.query(models.RoleSkills.skill_id).filter(models.RoleSkills.role_id == role_id).all()
 
     # check if staff_skills and role_skills are empty
-    if not staff_skills:
-        raise HTTPException(status_code=404, detail="Staff skills not found")
-    if not role_skills:
-        raise HTTPException(status_code=404, detail="Role skills not found")
+    if not staff_skills and not role_skills:
+        print(f"===== STAFF SKILLS DUMP {staff_skills} =====")
+        print(f"===== ROLE SKILLS DUMP {role_skills} =====")
+
+        return set(), set()
     
     staff_skills_set = set(skill[0] for skill in staff_skills)
     role_skills_set = set(skill[0] for skill in role_skills)
@@ -34,6 +35,13 @@ def calculate_matching_skills(staff_id: int, role_id: int, db: Session):
 async def get_matching_percentage(staff_id: int, role_id: int, db: Session = Depends(get_db)):
     try:
         matching_skills, unmet_skills = calculate_matching_skills(staff_id, role_id, db)
+        if(len(matching_skills)+len(unmet_skills) == 0):
+            return {
+                "matching_percentage": 0,
+                "matched": [],
+                "unmet": []
+            }
+        
         matching_percentage = (len(matching_skills) / (len(matching_skills) + len(unmet_skills))) * 100
 
         response_data = {
@@ -69,7 +77,7 @@ def get_all_employees(db: db_dependency, employee_id: int | None = None, filter:
     staffSkills = db.query(models.StaffSkills)
     if not staffSkills:
         print(f"===== EMPLOYEES DUMP {staffSkills} =====")
-        raise HTTPException(status_code=204, detail="No staff skills found")
+        raise HTTPException(status_code=404, detail="No staff skills found")
     
     return paginate(staffSkills)
 
@@ -97,6 +105,6 @@ def get_all_role_skills(db: db_dependency, role_id: int | None = None, filter: s
 
     if not role_skills_query.first():
         print("===== ROLE SKILLS DUMP (Empty Query) =====")
-        raise HTTPException(status_code=204, detail="No role skills found")
+        raise HTTPException(status_code=404, detail="No role skills found")
     
     return paginate(role_skills_query)

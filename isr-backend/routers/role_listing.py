@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Response
 from fastapi_pagination import Page, paginate
 from fastapi_pagination.ext.sqlalchemy import paginate
 from fastapi.encoders import jsonable_encoder
@@ -105,3 +105,22 @@ def edit_listing(listing_id: int, listing: RoleListingUpdate, db: db_dependency,
         except SQLAlchemyError as e:
             print(e)
             raise HTTPException(status_code=500, detail="Error editing listing! Please ensure the following are correct: <br>1. Role ID exists <br>2. Role Source exists <br>3. Role Listing ID is unique")
+        
+
+@router.delete("/delete/{listing_id}")
+def delete_listing(listing_id: int, db: db_dependency):
+    res = db.query(models.RoleListings) \
+        .join(models.RoleDetails) \
+        .filter(models.RoleDetails.role_status == "active",
+                models.RoleDetails.role_id == models.RoleListings.role_id,
+                models.RoleListings.role_listing_id == listing_id).first()
+    if not res:
+        raise HTTPException(status_code=404, detail="Listing not found")
+    
+    try:
+        db.delete(res)
+        db.commit()
+        return Response(status_code=204)
+    except SQLAlchemyError as e:
+        print(e)
+        raise HTTPException(status_code=500, detail="Error deleting listing")
