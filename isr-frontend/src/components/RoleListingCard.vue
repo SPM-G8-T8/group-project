@@ -15,6 +15,9 @@
     </v-card-text>
 
     <v-card-actions class="justify-end">
+     <v-btn color="primary" elevated :to="{ path: 'role-application' }"
+        >Apply</v-btn
+      >
       <v-btn color="primary" elevated :to="{ path: 'role-listing' }"
         >View Info</v-btn
       >
