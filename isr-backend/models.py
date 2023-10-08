@@ -78,6 +78,7 @@ class RoleListings(Base):
     role_listing_updater = Column(Integer, ForeignKey(StaffDetails.staff_id))
     role_listing_ts_create = Column(DateTime(timezone=True), server_default=func.now())
     role_listing_ts_update = Column(DateTime(timezone=True), onupdate=func.now())
+    role_listing_status = Column(Enum("active", "inactive", name="role_listing_enum"))
 
     role = relationship("RoleDetails", backref="role_listings")
 
