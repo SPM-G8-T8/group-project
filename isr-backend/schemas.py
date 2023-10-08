@@ -67,3 +67,26 @@ class StaffSkillsRead(StaffSkillsBase):
 class RoleSkillsRead(BaseModel):
     role_id: int
     skill_id: int
+
+class RoleApplicationsBase(BaseModel):
+    role_app_id: int
+    role_listing_id: int
+    staff_id: int
+    role_app_status: str
+    role_app_ts_create: datetime
+
+class RoleApplicationsRead(RoleApplicationsBase):
+    pass
+
+class StaffDetailsBase(BaseModel):
+    staff_id: int
+    staff_fname: str
+    staff_lname: str
+    dept: str
+    email: str
+    phone: str
+    biz_address: str
+    sys_role: str
+
+class StaffDetailsRead(StaffDetailsBase):
+    pass
