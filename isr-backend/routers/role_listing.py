@@ -107,24 +107,19 @@ def edit_listing(listing_id: int, listing: RoleListingUpdate, db: db_dependency,
             raise HTTPException(status_code=500, detail="Error editing listing! Please ensure the following are correct: <br>1. Role ID exists <br>2. Role Source exists <br>3. Role Listing ID is unique")
         
 
-@router.patch("/deactivate/{listing_id}")
-def deactivate_listing(listing_id: int, db: db_dependency):
-    res = db.query(models.RoleListings) \
-        .join(models.RoleDetails, models.RoleDetails.role_id == models.RoleListings.role_id) \
-        .filter(models.RoleDetails.role_status == "active",
-                models.RoleListings.role_listing_id == listing_id).first()
-    if not res:
-        raise HTTPException(status_code=404, detail="Listing not found")
+# @router.patch("/deactivate/{listing_id}")
+# def deactivate_listing(listing_id: int, db: db_dependency):
+#     res = db.query(models.RoleListings) \
+#         .join(models.RoleDetails, models.RoleDetails.role_id == models.RoleListings.role_id) \
+#         .filter(models.RoleDetails.role_status == "active",
+#                 models.RoleListings.role_listing_id == listing_id).first()
+#     if not res:
+#         raise HTTPException(status_code=404, detail="Listing not found")
     
-    try:
-        role_detail = db.query(models.RoleDetails) \
-            .filter(models.RoleDetails.role_id == res.role_id).first()
-        if not role_detail:
-            raise HTTPException(status_code=404, detail="Role detail not found")
-
-        role_detail.role_status = "inactive"
-        db.commit()
-        return Response(status_code=204)
-    except SQLAlchemyError as e:
-        print(e)
-        raise HTTPException(status_code=500, detail="Error deactivating listing")
+#     try:
+#         res.role_status = "inactive"
+#         db.commit()
+#         return Response(status_code=204)
+#     except SQLAlchemyError as e:
+#         print(e)
+#         raise HTTPException(status_code=500, detail="Error deactivating listing")
