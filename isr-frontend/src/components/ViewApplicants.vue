@@ -29,6 +29,9 @@
                 @click:append="clearSearch"
             ></v-text-field>
         </v-col>
+        <div v-show="noApplicants">
+            <h2>No applicants yet</h2>
+        </div>
         <v-col cols="12" md="6" lg="4">
             <v-card>
             <v-card-title>
@@ -52,15 +55,33 @@ import axios from "axios";
 export default {
   data() {
     return {
+        listingID: this.$route.params.listingID,
+        listingDetails: [],
+        noApplicants: false,
         search: ""
     };
   },
   methods: {
     clearSearch() {
-            this.search = "";
+        this.search = "";
+    },
+    getListingDetails() {
+        axios
+            .get(`http://localhost:8000/applicants/${this.listingID}`)
+            .then((response) => {
+                this.listingDetails = response.data;
+                console.log(this.listingDetails)
+            })
+            .catch((error) => {
+                console.log(error);
+                this.noApplicants = true;
+                console.log(this.noApplicants)
+            });
     },
   },
   mounted() {
+    this.getListingDetails();
   },
 };
+
 </script>
