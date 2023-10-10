@@ -48,6 +48,11 @@
 </template>
 
 <script>
+import { getStaffDetails } from "@/api/api";
+import { useAppStore } from "@/store/app";
+import { mapActions } from "pinia";
+import axios from "axios";
+
 export default {
   data: () => ({
     form: false,
@@ -60,20 +65,24 @@ export default {
       if (!this.form) return;
       this.loading = true;
       setTimeout(() => (this.loading = false), 2000);
-      const { username, password } = this;
-      if (username === "staff" && password === "staff1") {
-        this.$router.push("/view-listing");
-        alert("Staff successfully logged in.");
-      } else if (username === "hr" && password === "hr1") {
-        this.$router.push("/role-listing");
-        alert("HR successfully logged in.");
-      } else {
-        alert("Invalid credentials.");
-      }
+      const { username } = this;
+
+      axios
+        .get(getStaffDetails, { params: { staff_email: username } })
+        .then((response) => {
+          console.log(response);
+          this.updateStaffDetails(response.data);
+          this.$router.push("/");
+        })
+        .catch((error) => {
+          console.log(`Error: ${error}`);
+          alert("Invalid username or password");
+        });
     },
     required(v) {
       return !!v || "Field is required";
     },
+    ...mapActions(useAppStore, ["updateStaffDetails"]),
   },
 };
 </script>

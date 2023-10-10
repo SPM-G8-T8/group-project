@@ -14,3 +14,5 @@ export const getRoles = rootURL + "/roles";
 
 export const getRoleApplication = rootURL + "/application";
 export const createRoleApplication = rootURL + "/application/create";
+
+export const getStaffDetails = rootURL + "/staff";
