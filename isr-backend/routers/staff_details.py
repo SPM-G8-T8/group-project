@@ -3,8 +3,8 @@ from fastapi_pagination import Page, paginate
 from fastapi_pagination.ext.sqlalchemy import paginate
 from database import get_db
 from sqlalchemy.orm import Session
-from typing import Annotated
-from schemas import StaffRolesRead, StaffSkillsBase, StaffDetailsBase
+from typing import Annotated, List
+from schemas import StaffRolesRead, StaffDetailsBase, StaffSkillsRead
 import models
 
 router = APIRouter()
@@ -19,9 +19,9 @@ def get_staff_roles(staff_id: int, db: db_dependency):
         raise HTTPException(status_code=404, detail="Staff roles not found")
     return staff_roles
 
-@router.get("/staff-skills/{staff_id}", response_model=StaffSkillsBase)
+@router.get("/staff-skills/{staff_id}", response_model=List[StaffSkillsRead])
 def get_staff_skills(staff_id: int, db: db_dependency):
-    staff_skills = db.query(models.StaffSkills).filter(models.StaffSkills.staff_id == staff_id)
+    staff_skills = db.query(models.StaffSkills).join(models.SkillDetails).filter(models.StaffSkills.staff_id == staff_id)
     if not staff_skills:
         raise HTTPException(status_code=404, detail="Staff skills not found")
     return staff_skills

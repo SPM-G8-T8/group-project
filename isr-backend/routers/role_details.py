@@ -20,8 +20,8 @@ def get_all_roles(db: db_dependency):
     try:
         res = db.query(models.RoleDetails).all()
 
-        for i in res:
-            print(i.__dict__)
+        # for i in res:
+        #     print(i.__dict__)
 
         return res
     

@@ -1,15 +1,14 @@
 <template>
-  <v-container class="fill-height">
+  <v-container class="fill-height my-2">
     <v-responsive class="align-center text-center fill-height">
       <v-img height="300" src="@/assets/challenge.png" />
 
       <div class="text-h4 font-weight-light mb-n1">All-In-One</div>
       <div class="py-1" />
 
-      <h1 class="text-h3 font-weight-bold">Skill-based Role Portal</h1>
+      <h1 class="text-h4 font-weight-bold">Skill-based Role Portal</h1>
 
-      <div class="py-3" />
-      <v-card class="mx-auto px-6 py-8" max-width="344">
+      <v-card class="mx-auto my-3 px-6 py-8" max-width="344">
         <v-form v-model="form" @submit.prevent="onSubmit">
           <v-text-field
             v-model="username"
@@ -17,6 +16,9 @@
             :rules="[required]"
             class="mb-2"
             label="Email"
+            variant="outlined"
+            density="compact"
+            hide-details="auto"
           ></v-text-field>
 
           <v-text-field
@@ -26,6 +28,9 @@
             :rules="[required]"
             label="Password"
             placeholder="Enter your password"
+            variant="outlined"
+            density="compact"
+            hide-details="auto"
           ></v-text-field>
 
           <br />
@@ -43,12 +48,21 @@
           </v-btn>
         </v-form>
       </v-card>
+
+      <v-card>
+        <v-card-title> Accounts </v-card-title>
+        <v-card-text>
+          <p>HR: john.doe@example.com</p>
+          <p>Staff: jane.smith@example.com</p>
+          <p>Manager: bob.johnson@example.com</p>
+        </v-card-text>
+      </v-card>
     </v-responsive>
   </v-container>
 </template>
 
 <script>
-import { getStaffDetails } from "@/api/api";
+import { getStaffDetails, getStaffSkills } from "@/api/api";
 import { useAppStore } from "@/store/app";
 import { mapActions } from "pinia";
 import axios from "axios";
@@ -72,6 +86,19 @@ export default {
         .then((response) => {
           console.log(response);
           this.updateStaffDetails(response.data);
+
+          const { staff_id } = response.data;
+
+          axios
+            .get(getStaffSkills + `${staff_id}`)
+            .then((response) => {
+              console.log(response);
+              this.updateStaffSkills(response.data);
+            })
+            .catch((error) => {
+              console.log(`Error: ${error}`);
+            });
+
           this.$router.push("/");
         })
         .catch((error) => {
@@ -82,7 +109,7 @@ export default {
     required(v) {
       return !!v || "Field is required";
     },
-    ...mapActions(useAppStore, ["updateStaffDetails"]),
+    ...mapActions(useAppStore, ["updateStaffDetails", "updateStaffSkills"]),
   },
 };
 </script>

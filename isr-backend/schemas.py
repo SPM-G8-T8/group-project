@@ -61,6 +61,8 @@ class StaffSkillsUpdate(StaffSkillsBase):
     pass
 
 class StaffSkillsRead(StaffSkillsBase):
+    skill: SkillDetailsBase
+
     class Config:
         orm_mode = True
 

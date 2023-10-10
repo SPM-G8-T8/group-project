@@ -37,16 +37,22 @@ class RoleDetails(Base):
 class RoleSkills(Base):
     __tablename__ = 'role_skills'
 
-    role_id = Column(Integer, primary_key=True)
-    skill_id = Column(Integer, primary_key=True)
+    role_id = Column(Integer, ForeignKey(RoleDetails.role_id), primary_key=True)
+    skill_id = Column(Integer, ForeignKey(SkillDetails.skill_id), primary_key=True)
+
+    role = relationship("RoleDetails", backref="role_skills")
+    skill = relationship("SkillDetails", backref="role_skills")
 
 
 
 class StaffReportingOfficer(Base):
     __tablename__ = 'staff_reporting_officer'
 
-    staff_id = Column(Integer, primary_key=True)
-    RO_id = Column(Integer, primary_key=True)
+    staff_id = Column(Integer, ForeignKey(StaffDetails.staff_id), primary_key=True)
+    RO_id = Column(Integer, ForeignKey(StaffDetails.staff_id), primary_key=True)
+
+    staff = relationship("StaffDetails", foreign_keys=[staff_id],  backref="staff_reporting_officer")
+    RO = relationship("StaffDetails", foreign_keys=[RO_id], backref="RO_reporting_officers")
 
 
 class StaffRoles(Base):
@@ -57,13 +63,18 @@ class StaffRoles(Base):
     role_type = Column(Enum("primary", "secondary", name="role_type_enum"))
     sr_status = Column(Enum("active", "inactive", name="sr_status_enum"))
 
+    role = relationship("RoleDetails", backref="staff_roles");
+
 
 class StaffSkills(Base):
     __tablename__ = 'staff_skills'
 
-    staff_id = Column(Integer, primary_key=True)
-    skill_id = Column(Integer, nullable=False)
+    staff_id = Column(Integer, ForeignKey(StaffDetails.staff_id), primary_key=True)
+    skill_id = Column(Integer, ForeignKey(SkillDetails.skill_id), primary_key=True)
     ss_status = Column(Enum("active", "unverified", "in-progress", name="ss_status_enum"))
+
+    staff = relationship("StaffDetails", backref="staff_skills")
+    skill = relationship("SkillDetails", backref="staff_skills")
 
 class RoleListings(Base):
     __tablename__ = 'role_listings'
@@ -90,6 +101,9 @@ class RoleApplications(Base):
     staff_id = Column(Integer, ForeignKey(StaffDetails.staff_id))
     role_app_ts_create = Column(DateTime(timezone=True), server_default=func.now())
     role_app_status = Column(Enum("applied", "withdrawn", name="role_app_enum"))
+
+    role_listing = relationship("RoleListings", backref="role_applications")
+    staff = relationship("StaffDetails", backref="role_applications")
 
 
 
