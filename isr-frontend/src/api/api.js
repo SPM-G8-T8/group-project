@@ -12,8 +12,8 @@ export const deactivateListing = rootURL + "/deactivate";
 
 export const getRoles = rootURL + "/roles/";
 
-export const getRoleApplication = rootURL + "/application/";
-export const createRoleApplication = rootURL + "/application/create/";
+export const getRoleApplication = rootURL + "/applicants/";
+export const createRoleApplication = rootURL + "/applicants/create/";
 
 export const getStaffDetails = rootURL + "/staff/";
 export const getStaffSkills = rootURL + "/staff-skills/";

@@ -6,7 +6,7 @@ from database import get_db
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from typing import Annotated, Optional
-from schemas import RoleApplicationsBase, RoleApplicationCreate, RoleApplicationsRead
+from schemas import RoleApplicationsBase, RoleApplicationCreate, RoleApplicationsRead, StaffDetailsRead
 import models
 import datetime
 import json
@@ -15,14 +15,25 @@ router = APIRouter()
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
-@router.get("/application", response_model=Page[RoleApplicationsRead])
-def get_all_applications(db: db_dependency, role_app_id: int | None = None, filter: str | None = None):
-    res = db.query(models.RoleApplications)
+@router.get("/applicants", response_model=Page[RoleApplicationsRead])
+def get_all_applicants(db: db_dependency):
+    res = db.query(models.RoleApplications).filter(models.RoleApplications.role_app_status == "applied")
     if res.count() == 0:
-        raise HTTPException(status_code=404, detail="No applications found")
+        raise HTTPException(status_code=404, detail="No applicants found")
     return paginate(res)
 
-@router.post("/application/create")
+
+@router.get("/applicants/{role_listing_id}", response_model=Page[StaffDetailsRead])   
+def get_applicants(role_listing_id: int, db: db_dependency):
+    res = db.query(models.StaffDetails) \
+    .join(models.RoleApplications, models.StaffDetails.staff_id == models.RoleApplications.staff_id) \
+    .filter(models.RoleApplications.role_listing_id == role_listing_id,
+            models.RoleApplications.role_app_status == "applied")
+    if res.count() == 0:
+        raise HTTPException(status_code=404, detail="No applicants found")
+    return paginate(res)
+
+@router.post("/applicants/create")
 def create_application(application: RoleApplicationCreate, db: db_dependency):
 
     try:
