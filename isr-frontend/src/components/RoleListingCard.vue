@@ -27,6 +27,7 @@
 <script>
 import { getSkillMatch } from "@/api/api";
 import axios from "axios";
+import { useAppStore } from "@/store/app";
 
 export default {
   props: {
@@ -42,9 +43,14 @@ export default {
     };
   },
   mounted() {
-    this.employeeId = window.sessionStorage.getItem("employeeId")
-      ? window.sessionStorage.getItem("employeeId")
-      : 1; // for testing, default to 1
+    const appStore = useAppStore();
+    // this.employeeId = window.sessionStorage.getItem("employeeId")
+    //   ? window.sessionStorage.getItem("employeeId")
+    //   : 1; // for testing, default to 1
+    console.log(`staff_details: ${JSON.stringify(appStore.staff_details)}`)
+    this.employeeId = appStore.staff_details ? appStore.staff_details.staff_id : 1;
+
+
     // this.employeeId = window.sessionStorage.getItem("employeeId")
     this.getMatchSkills(this.roleListing.role_listing_id);
   },
