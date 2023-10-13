@@ -63,7 +63,7 @@ class StaffRoles(Base):
     role_type = Column(Enum("primary", "secondary", name="role_type_enum"))
     sr_status = Column(Enum("active", "inactive", name="sr_status_enum"))
 
-    role = relationship("RoleDetails", backref="staff_roles");
+    role = relationship("RoleDetails", backref="staff_roles")
 
 
 class StaffSkills(Base):
