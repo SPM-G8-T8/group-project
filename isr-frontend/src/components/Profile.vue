@@ -10,7 +10,7 @@
         <h2>Skills:</h2>
         <ul>
           <li v-for="skill in staff_skills" :key="skill.skill_id">
-            {{ skill.skill.skill_name }} - {{ skill.skill.skill_status }}
+            {{ skill.skill.skill_name }} - {{ skill.ss_status }}
           </li>
         </ul>
       </v-col>
@@ -28,7 +28,7 @@
           ></v-select>
           <v-select
             v-model="selectedStatus"
-            :items="['active', 'inactive']"
+            :items="['active', 'in-progress', 'unverified']"
             label="Select Status"
           ></v-select>
           <v-btn type="submit" color="primary">Update Skill</v-btn>
@@ -40,7 +40,6 @@
 
 <script>
 import { getStaffSkills } from "@/api/api";
-import { UpdateStaffSkills } from "@/api/api";
 import axios from "axios";
 import { useAppStore } from "@/store/app";
 
@@ -52,6 +51,7 @@ export default {
       staff_details: null,
       selectedSkill: null,
       selectedStatus: null,
+      selectedSkillId: null,
       availableSkills: [], // Add an array to store available skills for selection
     };
   },
@@ -64,7 +64,6 @@ export default {
   },
   methods: {
     async getStaffSkills(employeeId) {
-      console.log(`${getStaffSkills}${this.employeeId}`);
       axios.get(`${getStaffSkills}${this.employeeId}`)
         .then((response) => {
           console.log(JSON.stringify(response.data));
@@ -72,35 +71,31 @@ export default {
             this.staff_skills.forEach((skillObject) => {
             this.availableSkills.push(skillObject.skill.skill_name);
             this.selectedSkill = skillObject.skill.skill_name;
-            this.selectedStatus = skillObject.skill.skill_status;
+            this.selectedStatus = skillObject.ss_status;
+            console.log(`skillobject: ${skillObject.skill_id}`)
             });
         })
         .catch((error) => {
           console.log(JSON.stringify(error));
         });
     },
-    async updateSkills() {
-      // Create an object to represent the updated skill
-      const updatedSkill = {
-        staff_id: this.employeeId,
-        skill_id: this.selectedSkill,
-        ss_status: this.selectedStatus,
-      };
-        const updatedSkillObject = {
-        staff_id: this.employeeId,
-        skill_id: this.selectedSkill,
-        ss_status: this.selectedStatus,
-      };
+    updateSkills() {
+      this.staff_skills.forEach((skillObject) => {
+        if (skillObject.skill.skill_name === this.selectedSkill) {
+          this.selectedSkillId = skillObject.skill_id;
+        }
+          axios
+            .put(`http://localhost:8000/staff-skills/update/${this.employeeId}/${this.selectedSkillId}/${this.selectedStatus}`)
+              .then((response) => {
+                console.log(response);
+                this.getStaffSkills(this.employeeId);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+      });
 
-      try {
-        // Call an API function to update the skill
-        await UpdateStaffSkills(updatedSkillObject); // Replace with the appropriate API function
-        // Refresh the list of skills after updating
-        this.getStaffSkills(this.employeeId);
-      } catch (error) {
-        console.error("Error updating skill:", error);
-        // Handle the error and show an error message if necessary
-      }
+      
     },
   },
 };
