@@ -49,23 +49,6 @@ class SkillDetailsUpdate(SkillDetailsBase):
 class SkillDetailsRead(SkillDetailsBase):
     pass
 
-class StaffSkillsBase(BaseModel):
-    staff_id: int
-    skill_id: int
-    ss_status: str
-
-class StaffSkillsCreate(StaffSkillsBase):
-    pass
-
-class StaffSkillsUpdate(StaffSkillsBase):
-    pass
-
-class StaffSkillsRead(StaffSkillsBase):
-    skill: SkillDetailsBase
-
-    class Config:
-        orm_mode = True
-
 class RoleSkillsRead(BaseModel):
     role_id: int
     skill_id: int
@@ -104,3 +87,20 @@ class StaffRolesBase(BaseModel):
 
 class StaffRolesRead(StaffRolesBase):
     pass
+
+class StaffSkillsBase(BaseModel):
+    staff_id: int
+    skill_id: int
+    ss_status: str
+
+class StaffSkillsCreate(StaffSkillsBase):
+    pass
+
+class StaffSkillsUpdate(StaffSkillsBase):
+    pass
+
+class StaffSkillsRead(StaffSkillsBase):
+    skill: SkillDetailsBase
+
+    class Config:
+        orm_mode = True
