@@ -50,7 +50,12 @@ const navMenu = {
     },
   ],
   staff: [],
-  manager: [],
+  manager: [
+    {
+      title: "Search for Candidates",
+      to: "/search-candidate"
+    },
+  ],
 };
 
 const logout = () => {
