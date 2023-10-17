@@ -15,11 +15,8 @@
     </v-card-text>
 
     <v-card-actions class="justify-end">
-     <v-btn color="primary" elevated :to="{ path: 'role-application' }"
+     <v-btn color="primary" elevated :to="{ name: 'ApplyRole', params: { listingID: roleListing.role_listing_id } }"
         >Apply</v-btn
-      >
-      <v-btn color="primary" elevated :to="{ path: 'role-listing' }"
-        >View Info</v-btn
       >
     </v-card-actions>
   </v-card>

@@ -18,6 +18,11 @@
         </router-link>
       </v-list-item>
       <v-list-item>
+        <router-link to="/" class="text-decoration-none text-white">
+          View Listings
+        </router-link>
+      </v-list-item>
+      <v-list-item>
         <router-link to="/profile" class="text-decoration-none text-white">
           My Profile
         </router-link>
