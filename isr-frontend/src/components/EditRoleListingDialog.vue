@@ -159,7 +159,7 @@ export default {
     fetchListingDetails(){
         console.log("fetchlisting")
         this.roleListingId = this.selectedListingId;
-        axios.get(`${getRoleListing}/${this.selectedListingId}`)
+        axios.get(`${getRoleListing}${this.selectedListingId}`)
         .then(response => {
             this.roleId = response.data.role_id
             this.roleListingSource = response.data.role_listing_source
@@ -173,20 +173,21 @@ export default {
     },
 
     editRoleList(){
+        const today = new Date()
         if (this.roleListingOpen > this.roleListingClose) {
             this.errorMessage = "Open Date must be before Close Date.";
         } else {
             axios
-            .put(`${editRoleListing}/${this.selectedListingId}`,{
+            .put(`${editRoleListing}${this.selectedListingId}`,{
                 role_listing_source: this.roleListingSource,
                 role_listing_desc: this.roleListingDesc,
                 role_listing_open: this.roleListingOpen,
                 role_listing_close: this.roleListingClose,
+                role_listing_ts_update: today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate(),
             })
             .then((response) => {
                 console.log(response);
                 this.editSuccess = true;
-                // this.$router.go() // reload
             })         
             .catch((error) => {
                 console.log(error);
@@ -199,9 +200,6 @@ export default {
     closeDialog(){
         this.errorMessage = "";
         this.dialog = false;
-        if(this.editSuccess){
-            this.$router.go();
-        }
         this.editSuccess = false;
 
     }
