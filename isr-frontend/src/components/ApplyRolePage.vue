@@ -53,9 +53,15 @@
 
 <script>
 import { createRoleApplication, getRoleListing } from "@/api/api.js";
+import { useAppStore } from "@/store/app";
 import axios from "axios";
 
 export default {
+  setup() {
+    const appStore = useAppStore(); 
+
+    return { appStore };
+  },
   data() {
     return {
       roleListing: null,
@@ -69,7 +75,6 @@ export default {
       } else {
         return this.roleListing.role_listing_ts_create.split("T")[0]
       }
-      
     }
   },
   methods: {
@@ -93,23 +98,23 @@ export default {
         });
     },
     applyRole() {
-        axios
-          .post(createRoleApplication, {
-            role_app_id: 102000,
-            role_listing_id: 3,
-            staff_id: 2,
-            role_app_status: "applied"
-          })
-          .then((response) => {
-            console.log(response);
-            this.errorMessage = "";
-            this.createdSuccess = true;
-            alert("Role Application Created!");
-          })
-          .catch((error) => {
-            console.log(error);
-            this.errorMessage = error.response.data.detail;
-          });
+      console.log(this.appStore)
+      
+      axios
+        .post(createRoleApplication, {
+          role_listing_id: this.$route.params.listingID,
+          staff_id: this.appStore.staff_details.staff_id,
+        })
+        .then((response) => {
+          console.log(response);
+          this.errorMessage = "";
+          this.createdSuccess = true;
+          alert("Role Application Created!");
+        })
+        .catch((error) => {
+          console.log(error);
+          alert("Already applied for this role!");
+        });
     },
   },
   mounted() {
