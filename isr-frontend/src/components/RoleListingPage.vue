@@ -76,7 +76,8 @@
 import CreateRoleListingDialog from "@/components/CreateRoleListingDialog.vue";
 import EditRoleListingDialog from "@/components/EditRoleListingDialog.vue";
 import PaginationToolBar from "./PaginationToolBar.vue";
-import { getRoleListing, deactivateListing } from "@/api/api.js";
+import { getRoleListing, getRoleListingByCreator,deactivateListing } from "@/api/api.js";
+import { useAppStore } from "@/store/app";
 import axios from "axios";
 
 export default {
@@ -93,7 +94,8 @@ export default {
       size: 2,
       total: null,
       totalPages: 1,
-      selectedListingId: null
+      selectedListingId: null,
+      employeeId: null,
     };
   },
   computed: {
@@ -106,8 +108,10 @@ export default {
   },
   methods: {
     fetchRoleListings(queryParams) {
+      console.log(`employee ID: ${this.employeeId}`)
       axios
-        .get(getRoleListing, { params: queryParams })
+        // .get(getRoleListing, { params: queryParams })
+        .get(`${getRoleListingByCreator}${this.employeeId}`, { params: queryParams })
         .then((response) => {
           this.roleListings = response.data.items;
           this.page = response.data.page;
@@ -164,6 +168,12 @@ export default {
     }
   },
   mounted() {
+    const appStore = useAppStore();
+    // this.employeeId = window.sessionStorage.getItem("employeeId")
+    //   ? window.sessionStorage.getItem("employeeId")
+    //   : 1; // for testing, default to 1
+    console.log(`staff_details: ${JSON.stringify(appStore.staff_details)}`)
+    this.employeeId = appStore.staff_details.staff_id
     this.getRoleListings();
   },
 };

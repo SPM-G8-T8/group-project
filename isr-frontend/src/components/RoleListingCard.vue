@@ -45,7 +45,7 @@ export default {
     //   ? window.sessionStorage.getItem("employeeId")
     //   : 1; // for testing, default to 1
     console.log(`staff_details: ${JSON.stringify(appStore.staff_details)}`)
-    this.employeeId = appStore.staff_details ? appStore.staff_details.staff_id : 1;
+    this.employeeId = appStore.staff_details.staff_id;
 
 
     // this.employeeId = window.sessionStorage.getItem("employeeId")
@@ -53,9 +53,9 @@ export default {
   },
   methods: {
     async getMatchSkills(roleId) {
-      console.log(`${getSkillMatch}/${this.employeeId}/${roleId}`);
+      console.log(`${getSkillMatch}${this.employeeId}/${roleId}`);
       axios
-        .get(`${getSkillMatch}/${this.employeeId}/${roleId}`)
+        .get(`${getSkillMatch}${this.employeeId}/${roleId}`)
         .then((response) => {
           console.log(JSON.stringify(response.data));
           this.match_skills = response.data.data.matching_percentage;
