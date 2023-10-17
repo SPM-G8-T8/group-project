@@ -124,3 +124,17 @@ def deactivate_listing(listing_id: int, db: db_dependency):
     except SQLAlchemyError as e:
         print(e)
         raise HTTPException(status_code=500, detail="Error deactivating listing")
+    
+
+@router.get("/{listing_id}/skills")
+def get_listing_skills(listing_id: int, db: db_dependency):
+    res = db.query(models.RoleListings).filter(models.RoleListings.role_listing_id == listing_id).first()
+    if not res:
+        raise HTTPException(status_code=404, detail="Listing not found")
+
+    try:
+        skills = db.query(models.SkillDetails).join(models.RoleSkills).filter(models.RoleSkills.role_id == res.role_id).all()
+        return skills
+    except SQLAlchemyError as e:
+        print(e)
+        raise HTTPException(status_code=500, detail="Error retrieving listing skills")
