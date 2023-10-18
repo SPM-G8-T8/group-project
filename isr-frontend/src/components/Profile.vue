@@ -98,7 +98,7 @@ export default {
       this.getStaffSkills(this.employeeId);
     })
     .catch((error) => {
-        alert("Skill updated, please refresh the page to see changes!");
+        alert("Error updating skill.");
         console.log(error);
 
     });
