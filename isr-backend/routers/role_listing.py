@@ -67,11 +67,18 @@ def get_listing_by_id(listing_id: int, db: db_dependency):
 
 @router.get("/created-by/{staff_id}", response_model=Page[RoleListingRead])
 def get_listing_created_by_staff(staff_id: int, db: db_dependency):
-    res = db.query(models.RoleListings) \
-    .join(models.RoleDetails) \
-    .filter(models.RoleDetails.role_status == "active",
-            models.RoleDetails.role_id == models.RoleListings.role_id,
-            models.RoleListings.role_listing_source == staff_id)
+    staff_details=db.query(models.StaffDetails).filter(models.StaffDetails.staff_id == staff_id).first()
+    if(staff_details.sys_role != "admin"):
+        res = db.query(models.RoleListings) \
+        .join(models.RoleDetails) \
+        .filter(models.RoleDetails.role_status == "active",
+                models.RoleDetails.role_id == models.RoleListings.role_id,
+                models.RoleListings.role_listing_source == staff_id)
+    else:
+        res=db.query(models.RoleListings) \
+        .join(models.RoleDetails) \
+        .filter(models.RoleDetails.role_status == "active",
+                models.RoleDetails.role_id == models.RoleListings.role_id)
     
     if not res:
         raise HTTPException(status_code=404, detail="Listings by staff not found")
