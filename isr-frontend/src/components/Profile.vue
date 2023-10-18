@@ -52,7 +52,7 @@ export default {
       selectedSkill: null,
       selectedStatus: null,
       selectedSkillId: null,
-      availableSkills: [], // Add an array to store available skills for selection
+      availableSkills: [],
     };
   },
   mounted() {
@@ -84,18 +84,24 @@ export default {
         if (skillObject.skill.skill_name === this.selectedSkill) {
           this.selectedSkillId = skillObject.skill_id;
         }
-          axios
-            .put(`http://localhost:8000/staff-skills/update/${this.employeeId}/${this.selectedSkillId}/${this.selectedStatus}`)
-              .then((response) => {
-                console.log(response);
-                this.getStaffSkills(this.employeeId);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
       });
+        axios({
+        url:`http://localhost:8000/staff-skills/update/${this.employeeId}?skill_id=${this.selectedSkillId}&skill_status=${this.selectedStatus}`,
+        method:"PUT",
+        headers:{
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": 'GET, POST, PUT, DELETE, OPTIONS'
+        }
+    }).then((response) => {
+      alert("Skill updated!");
+      console.log(response);
+      this.getStaffSkills(this.employeeId);
+    })
+    .catch((error) => {
+        alert("Skill updated, please refresh the page to see changes!");
+        console.log(error);
 
-      
+    });
     },
   },
 };
