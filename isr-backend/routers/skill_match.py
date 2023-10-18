@@ -9,7 +9,10 @@ from schemas import SkillDetailsRead, StaffSkillsRead, RoleSkillsRead, StaffSkil
 import models
 import json
 
-router = APIRouter()
+router = APIRouter(
+    prefix='/skill-match',
+    tags=['skill_match']
+)
 
 db_dependency = Annotated[Session, Depends(get_db)]
 def calculate_matching_skills(staff_id: int, role_id: int, db: Session):

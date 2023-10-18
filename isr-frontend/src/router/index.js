@@ -45,11 +45,6 @@ const routes = [
         name: "Profile",
         component: () => import("@/views/Profile.vue"),
       },
-      {
-        path: "search-candidate",
-        name: "SearchCandidate",
-        component: () => import("@/views/SearchCandidate.vue"),
-      }
     ],
   },
   {

@@ -22,10 +22,12 @@ class RoleListingCreate(RoleListingBase):
     role_listing_creator: int
     
 class RoleListingUpdate(BaseModel):
+    role_id: int
     role_listing_desc: Union[str, None] = None
     role_listing_source: Union[int, None] = None
     role_listing_open: Union[date, None] = None
     role_listing_close: Union[date, None] = None
+    role_listing_updater: int
 
 class RoleListingRead(RoleListingBase):
     role_listing_id: int
