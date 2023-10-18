@@ -36,13 +36,14 @@ def get_staff_details(staff_email: str, db: db_dependency):
 
 @router.put("/staff-skills/update/{staff_id}/{skill_id}/{skill_status}")
 def update_staff_skills(staff_id: int, skill_id: int, skill_status: str, db: db_dependency):
+
     try:
-        staff_skills = db.query(models.StaffSkills).filter(models.StaffSkills.staff_id == staff_id)
+        staff_skills = db.query(models.StaffSkills).filter(models.StaffSkills.staff_id == staff_id, models.StaffSkills.skill_id == skill_id).first()
+
         if not staff_skills:
             raise HTTPException(status_code=404, detail="Staff skills not found")
-        for skill in staff_skills:
-            if skill.skill_id == skill_id:
-                skill.ss_status = skill_status
+        
+        staff_skills.ss_status = skill_status
         db.commit()
         return {"message": "Staff Skils updated", "skill": staff_skills}
 
