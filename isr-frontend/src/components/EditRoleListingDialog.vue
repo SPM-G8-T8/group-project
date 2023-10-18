@@ -25,7 +25,7 @@
                                 density="compact"
                                 hide-details="auto"
                                 v-model="roleId"
-                                disabled
+                                :disabled="editSuccess"
                                 :rules="[rules.required, rules.number]"
                             >
                             </v-text-field>
@@ -121,6 +121,11 @@
 <script>
 import axios from "axios";
 import { editRoleListing, getRoleListing } from "@/api/api.js";
+import { useAppStore } from "@/store/app";
+import { storeToRefs } from "pinia";
+
+const appStore = useAppStore();
+const { staff_details } = storeToRefs(appStore);
 
 export default {
   props: {
@@ -152,6 +157,7 @@ export default {
         if (newVal) {
             this.fetchListingDetails();
         }
+        console.log("Staff id: " + staff_details.value.staff_id)
     }
   },
 
@@ -174,16 +180,21 @@ export default {
 
     editRoleList(){
         const today = new Date()
+        const update_date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        const current_staff_id = staff_details.value.staff_id
+        console.log(current_staff_id)
         if (this.roleListingOpen > this.roleListingClose) {
             this.errorMessage = "Open Date must be before Close Date.";
         } else {
             axios
             .put(`${editRoleListing}${this.selectedListingId}`,{
+                role_id: this.roleId,
                 role_listing_source: this.roleListingSource,
                 role_listing_desc: this.roleListingDesc,
                 role_listing_open: this.roleListingOpen,
                 role_listing_close: this.roleListingClose,
-                role_listing_ts_update: today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate(),
+                role_listing_ts_update: update_date,
+                role_listing_updater: current_staff_id,
             })
             .then((response) => {
                 console.log(response);
