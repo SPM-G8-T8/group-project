@@ -55,7 +55,12 @@ const navMenu = {
     },
   ],
   staff: [],
-  manager: [],
+  manager: [
+    {
+      title: "Manage Listings",
+      to: "/role-listing",
+    },
+  ],
 };
 
 const logout = () => {

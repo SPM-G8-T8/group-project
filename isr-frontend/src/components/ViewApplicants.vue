@@ -38,7 +38,7 @@
             ></v-text-field>
         </v-col>
         <div v-show="noApplicants">
-            <h2>No applicants yet</h2>
+            <h2 class="ps-3">No applicants yet</h2>
         </div>
     </v-row>
     <v-row>

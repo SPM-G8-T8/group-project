@@ -37,7 +37,7 @@
             <th class="text-center text-h6">Description</th>
             <th class="text-center text-h6">Listing Open</th>
             <th class="text-center text-h6">Listing Close</th>
-            <th class="text-center text-h6">Actions</th>
+            <th v-if="sys_role=='hr'" class="text-center text-h6">Actions</th>
             <th class="text-center text-h6">Applicants</th>
           </tr>
         </thead>
@@ -52,7 +52,7 @@
           </td>
           <td class="text-center">{{ listing.role_listing_open }}</td>
           <td class="text-center">{{ listing.role_listing_close }}</td>
-          <td class="text-center">
+          <td v-if="sys_role=='hr'" class="text-center">
             <v-btn color="grey" class="my-2 mx-3" @click="deactivateListingBtn(listing.role_listing_id)">Deactivate</v-btn>
             <v-btn color="grey" class="my-2 mx-3" @click="openEditDialog(listing.role_listing_id)">Edit
               <EditRoleListingDialog :selectedListingId='listing.role_listing_id' />
@@ -96,6 +96,7 @@ export default {
       totalPages: 1,
       selectedListingId: null,
       employeeId: null,
+      sys_role: "",
     };
   },
   computed: {
@@ -109,18 +110,44 @@ export default {
   methods: {
     fetchRoleListings(queryParams) {
       console.log(`employee ID: ${this.employeeId}`)
-      axios
-        // .get(getRoleListing, { params: queryParams })
-        .get(`${getRoleListingByCreator}${this.employeeId}`, { params: queryParams })
-        .then((response) => {
-          this.roleListings = response.data.items;
-          this.page = response.data.page;
-          this.total = response.data.total;
-          this.totalPages = response.data.pages;
-        })
-        .catch((error) => {
-          console.error("Error fetching role listings:", error);
-        });
+      console.log(`sys_role: ${this.sys_role}`)
+      if (this.sys_role == "hr") {
+        axios
+          .get(getRoleListing, { params: queryParams })
+          .then((response) => {
+            this.roleListings = response.data.items;
+            this.page = response.data.page;
+            this.total = response.data.total;
+            this.totalPages = response.data.pages;
+          })
+          .catch((error) => {
+            console.error("Error fetching role listings:", error);
+          });
+      } else {
+        axios
+          .get(`${getRoleListingByCreator}${this.employeeId}`, { params: queryParams })
+          .then((response) => {
+            this.roleListings = response.data.items;
+            this.page = response.data.page;
+            this.total = response.data.total;
+            this.totalPages = response.data.pages;
+          })
+          .catch((error) => {
+            console.error("Error fetching role listings:", error);
+          });
+      }
+      // axios
+      //   .get(getRoleListing, { params: queryParams })
+      //   //.get(`${getRoleListingByCreator}${this.employeeId}`, { params: queryParams })
+      //   .then((response) => {
+      //     this.roleListings = response.data.items;
+      //     this.page = response.data.page;
+      //     this.total = response.data.total;
+      //     this.totalPages = response.data.pages;
+      //   })
+      //   .catch((error) => {
+      //     console.error("Error fetching role listings:", error);
+      //   });
     },
     getRoleListings() {
       const queryParams = {
@@ -172,8 +199,9 @@ export default {
     // this.employeeId = window.sessionStorage.getItem("employeeId")
     //   ? window.sessionStorage.getItem("employeeId")
     //   : 1; // for testing, default to 1
-    console.log(`staff_details: ${JSON.stringify(appStore.staff_details)}`)
-    this.employeeId = appStore.staff_details.staff_id
+    console.log(`staff_details: ${JSON.stringify(appStore.staff_details)}`);
+    this.employeeId = appStore.staff_details.staff_id;
+    this.sys_role = appStore.staff_details.sys_role;
     this.getRoleListings();
   },
 };
