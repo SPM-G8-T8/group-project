@@ -9,15 +9,24 @@
                     <v-col cols="6">
                         <h4>Skills Matched:</h4>
                     </v-col>
+                    <v-cols cols="6">
+
+                    </v-cols>
                 </v-row>
                 <v-row>
                     <v-col cols="6">
                         <h4>Skills Absent:</h4>
                     </v-col>
+                    <v-cols cols="6">
+
+                    </v-cols>
                 </v-row>
                 <v-row>
                     <v-col cols="6">
                         <h4>Other Skills:</h4>
+                    </v-col>
+                    <v-col cols="6">
+
                     </v-col>
                 </v-row>
             </v-card-text>

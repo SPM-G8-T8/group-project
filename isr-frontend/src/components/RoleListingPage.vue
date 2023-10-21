@@ -103,6 +103,7 @@ export default {
       total: null,
       totalPages: 1,
       selectedListingId: null,
+      // selectedRole: null,
       employeeId: null,
       sys_role: "",
     };
@@ -186,6 +187,10 @@ export default {
       this.selectedListingId = listingId;
       console.log(this.selectedListingId + " printed")
     },
+    // openCandidateDialog(roleId){
+    //   this.selectedRole = roleId;
+    //   console.log(this.selectedRole + " printed")
+    // },
     viewApplicants(roleID, listingID) {
       this.$router.push({
         name: "ViewApplicants",
