@@ -103,10 +103,10 @@ async def upload_cert(db: db_dependency, request: Request):
         db_staff_skills_cert = models.StaffSkillsCert(
             staff_id=staff_id,
             skill_id=skill_id,
-            certification_name = form["certification_name"]
-            certifying_agency = form["certifying_agency"]
-            certification_date = form["certification_date"]
-            awardee_name = form["awardee_name"]
+            certification_name = form["certification_name"],
+            certifying_agency = form["certifying_agency"],
+            certification_date = form["certification_date"],
+            awardee_name = form["awardee_name"],
             file_name=new_file_name
         )
 
@@ -123,9 +123,11 @@ async def upload_cert(db: db_dependency, request: Request):
 
 @router.get("/staff-skills/get_cert/{object_key}")
 async def get_cert(object_key: str):
-    try:
+    
+    if not file_services.key_exists(object_key):
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    else:
         response = file_services.fetch_file(object_key)
-
         return response
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+
