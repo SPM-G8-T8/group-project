@@ -53,8 +53,7 @@ def get_all_listings(db: db_dependency,
 
 
 @router.get("/{listing_id}", response_model=RoleListingRead)
-def get_listing_by_id(listing_id: int, db: db_dependency):
-    
+def get_listing_by_id(listing_id: int, db: db_dependency):    
     res = db.query(models.RoleListings) \
     .join(models.RoleDetails) \
     .filter(models.RoleDetails.role_status == "active",
@@ -66,6 +65,24 @@ def get_listing_by_id(listing_id: int, db: db_dependency):
 
     return res
 
+@router.get("/created-by/{staff_id}", response_model=Page[RoleListingRead])
+def get_listing_created_by_staff(staff_id: int, db: db_dependency):
+    staff_details=db.query(models.StaffDetails).filter(models.StaffDetails.staff_id == staff_id).first()
+    if(staff_details.sys_role != "admin"):
+        res = db.query(models.RoleListings) \
+        .join(models.RoleDetails) \
+        .filter(models.RoleDetails.role_status == "active",
+                models.RoleDetails.role_id == models.RoleListings.role_id,
+                models.RoleListings.role_listing_source == staff_id)
+    else:
+        res=db.query(models.RoleListings) \
+        .join(models.RoleDetails) \
+        .filter(models.RoleDetails.role_status == "active",
+                models.RoleDetails.role_id == models.RoleListings.role_id)
+    
+    if not res:
+        raise HTTPException(status_code=404, detail="Listings by staff not found")
+    return paginate(res)
 
 @router.post("/create")
 def create_listings(listing: RoleListingCreate, db: db_dependency):
@@ -108,8 +125,7 @@ def edit_listing(listing_id: int, listing: RoleListingUpdate, db: db_dependency,
         
         except SQLAlchemyError as e:
             print(e)
-            raise HTTPException(status_code=500, detail="Error editing listing! Please ensure the following are correct: <br>1. Role ID exists <br>2. Role Source exists <br>3. Role Listing ID is unique")
-        
+            raise HTTPException(status_code=500, detail="Error editing listing! Please ensure that the Role Source exists")
 
 @router.patch("/deactivate/{listing_id}")
 def deactivate_listing(listing_id: int, db: db_dependency):
@@ -124,3 +140,17 @@ def deactivate_listing(listing_id: int, db: db_dependency):
     except SQLAlchemyError as e:
         print(e)
         raise HTTPException(status_code=500, detail="Error deactivating listing")
+    
+
+@router.get("/{listing_id}/skills")
+def get_listing_skills(listing_id: int, db: db_dependency):
+    res = db.query(models.RoleListings).filter(models.RoleListings.role_listing_id == listing_id).first()
+    if not res:
+        raise HTTPException(status_code=404, detail="Listing not found")
+
+    try:
+        skills = db.query(models.SkillDetails).join(models.RoleSkills).filter(models.RoleSkills.role_id == res.role_id).all()
+        return skills
+    except SQLAlchemyError as e:
+        print(e)
+        raise HTTPException(status_code=500, detail="Error retrieving listing skills")

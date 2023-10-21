@@ -62,12 +62,17 @@ def get_staff_details(staff_email: str, db: db_dependency):
 def update_staff_skills(
     staff_id: int, updatedSkills: StaffSkillsUpdate, db: db_dependency
 ):
+@router.put("/staff-skills/update/{staff_id}/{skill_id}/{skill_status}")
+def update_staff_skills(staff_id: int, skill_id: int, skill_status: str, db: db_dependency):
+
     try:
         staff_skills = (
             db.query(models.StaffSkills)
             .join(models.SkillDetails)
             .filter(models.StaffSkills.staff_id == staff_id)
         )
+        staff_skills = db.query(models.StaffSkills).filter(models.StaffSkills.staff_id == staff_id, models.StaffSkills.skill_id == skill_id).first()
+
         if not staff_skills:
             raise HTTPException(status_code=404, detail="Staff skills not found")
         db_staff_skills.staff_id = updatedSkills.staff_id
@@ -79,6 +84,7 @@ def update_staff_skills(
             "message": "Staff Skill updated",
             "skill": jsonable_encoder(db_staff_skills),
         }
+        return {"message": "Staff Skils updated", "skill": staff_skills}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -97,10 +103,10 @@ async def upload_cert(db: db_dependency, request: Request):
         db_staff_skills_cert = models.StaffSkillsCert(
             staff_id=staff_id,
             skill_id=skill_id,
-            certification_name = form["certification_name"],
-            certifying_agency = form["certifying_agency"],
-            certification_date = form["certification_date"],
-            awardee_name = form["awardee_name"],
+            certification_name = form["certification_name"]
+            certifying_agency = form["certifying_agency"]
+            certification_date = form["certification_date"]
+            awardee_name = form["awardee_name"]
             file_name=new_file_name
         )
 
@@ -117,11 +123,9 @@ async def upload_cert(db: db_dependency, request: Request):
 
 @router.get("/staff-skills/get_cert/{object_key}")
 async def get_cert(object_key: str):
-    
-    if not file_services.key_exists(object_key):
-        raise HTTPException(status_code=404, detail="File not found")
+    try:
+        response = file_services.fetch_file(object_key)
 
-    response = file_services.fetch_file(object_key)
-    return response
-    
-
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

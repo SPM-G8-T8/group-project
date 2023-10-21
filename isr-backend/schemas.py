@@ -22,10 +22,12 @@ class RoleListingCreate(RoleListingBase):
     role_listing_creator: int
     
 class RoleListingUpdate(BaseModel):
+    role_id: int
     role_listing_desc: Union[str, None] = None
     role_listing_source: Union[int, None] = None
     role_listing_open: Union[date, None] = None
     role_listing_close: Union[date, None] = None
+    role_listing_updater: int
 
 class RoleListingRead(RoleListingBase):
     role_listing_id: int
@@ -49,23 +51,6 @@ class SkillDetailsUpdate(SkillDetailsBase):
 class SkillDetailsRead(SkillDetailsBase):
     pass
 
-class StaffSkillsBase(BaseModel):
-    staff_id: int
-    skill_id: int
-    ss_status: str
-
-class StaffSkillsCreate(StaffSkillsBase):
-    pass
-
-class StaffSkillsUpdate(StaffSkillsBase):
-    pass
-
-class StaffSkillsRead(StaffSkillsBase):
-    skill: SkillDetailsBase
-
-    class Config:
-        orm_mode = True
-
 class RoleSkillsRead(BaseModel):
     role_id: int
     skill_id: int
@@ -80,8 +65,9 @@ class RoleApplicationsBase(BaseModel):
 class RoleApplicationsRead(RoleApplicationsBase):
     pass
 
-class RoleApplicationCreate(RoleApplicationsBase):
-    pass
+class RoleApplicationCreate(BaseModel):
+    role_listing_id: int
+    staff_id: int
 
 class StaffDetailsBase(BaseModel):
     staff_id: int
@@ -104,6 +90,23 @@ class StaffRolesBase(BaseModel):
 
 class StaffRolesRead(StaffRolesBase):
     pass
+
+class StaffSkillsBase(BaseModel):
+    staff_id: int
+    skill_id: int
+    ss_status: str
+
+class StaffSkillsCreate(StaffSkillsBase):
+    pass
+
+class StaffSkillsUpdate(StaffSkillsBase):
+    pass
+
+class StaffSkillsRead(StaffSkillsBase):
+    skill: SkillDetailsBase
+
+    class Config:
+        orm_mode = True
 
 class StaffSkillCert(BaseModel):
     staff_id: int

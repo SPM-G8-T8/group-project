@@ -37,8 +37,9 @@
             <th class="text-center text-h6">Description</th>
             <th class="text-center text-h6">Listing Open</th>
             <th class="text-center text-h6">Listing Close</th>
-            <th class="text-center text-h6">Actions</th>
+            <th v-if="sys_role=='hr'" class="text-center text-h6">Actions</th>
             <th class="text-center text-h6">Applicants</th>
+            <th class="text-center text-h6">Potential Candidates</th>
           </tr>
         </thead>
         <tr v-for="(listing, index) in roleListings" :key="index">
@@ -52,14 +53,19 @@
           </td>
           <td class="text-center">{{ listing.role_listing_open }}</td>
           <td class="text-center">{{ listing.role_listing_close }}</td>
-          <td class="text-center">
-            <v-btn color="grey" class="my-2 mx-3" @click="deactivateListingBtn(listing.role_listing_id)">Deactivate</v-btn>
+          <td v-if="sys_role=='hr'" class="text-center">
+            <v-btn color="grey" class="my-2" @click="deactivateListingBtn(listing.role_listing_id)">Deactivate</v-btn>
             <v-btn color="grey" class="my-2 mx-3" @click="openEditDialog(listing.role_listing_id)">Edit
               <EditRoleListingDialog :selectedListingId='listing.role_listing_id' />
             </v-btn>
           </td>
           <td class="text-center py-1">
             <v-btn color="blue" @click="viewApplicants(listing.role_id, listing.role_listing_id)">View applicants</v-btn>
+          </td>
+          <td>
+            <v-btn color="blue-grey" class="my-2 mx-3" @click="openCandidateDialog()">Potential Candidates
+              <CandidatesDialog/>
+            </v-btn>
           </td>
         </tr>
       </v-table>
@@ -76,7 +82,9 @@
 import CreateRoleListingDialog from "@/components/CreateRoleListingDialog.vue";
 import EditRoleListingDialog from "@/components/EditRoleListingDialog.vue";
 import PaginationToolBar from "./PaginationToolBar.vue";
-import { getRoleListing, deactivateListing } from "@/api/api.js";
+import CandidatesDialog from "@/components/CandidatesDialog.vue";
+import { getRoleListing, getRoleListingByCreator,deactivateListing } from "@/api/api.js";
+import { useAppStore } from "@/store/app";
 import axios from "axios";
 
 export default {
@@ -84,6 +92,7 @@ export default {
     CreateRoleListingDialog,
     EditRoleListingDialog,
     PaginationToolBar,
+    CandidatesDialog
   },
   data() {
     return {
@@ -93,7 +102,9 @@ export default {
       size: 2,
       total: null,
       totalPages: 1,
-      selectedListingId: null
+      selectedListingId: null,
+      employeeId: null,
+      sys_role: "",
     };
   },
   computed: {
@@ -106,17 +117,45 @@ export default {
   },
   methods: {
     fetchRoleListings(queryParams) {
-      axios
-        .get(getRoleListing, { params: queryParams })
-        .then((response) => {
-          this.roleListings = response.data.items;
-          this.page = response.data.page;
-          this.total = response.data.total;
-          this.totalPages = response.data.pages;
-        })
-        .catch((error) => {
-          console.error("Error fetching role listings:", error);
-        });
+      console.log(`employee ID: ${this.employeeId}`)
+      console.log(`sys_role: ${this.sys_role}`)
+      if (this.sys_role == "hr") {
+        axios
+          .get(getRoleListing, { params: queryParams })
+          .then((response) => {
+            this.roleListings = response.data.items;
+            this.page = response.data.page;
+            this.total = response.data.total;
+            this.totalPages = response.data.pages;
+          })
+          .catch((error) => {
+            console.error("Error fetching role listings:", error);
+          });
+      } else {
+        axios
+          .get(`${getRoleListingByCreator}${this.employeeId}`, { params: queryParams })
+          .then((response) => {
+            this.roleListings = response.data.items;
+            this.page = response.data.page;
+            this.total = response.data.total;
+            this.totalPages = response.data.pages;
+          })
+          .catch((error) => {
+            console.error("Error fetching role listings:", error);
+          });
+      }
+      // axios
+      //   .get(getRoleListing, { params: queryParams })
+      //   //.get(`${getRoleListingByCreator}${this.employeeId}`, { params: queryParams })
+      //   .then((response) => {
+      //     this.roleListings = response.data.items;
+      //     this.page = response.data.page;
+      //     this.total = response.data.total;
+      //     this.totalPages = response.data.pages;
+      //   })
+      //   .catch((error) => {
+      //     console.error("Error fetching role listings:", error);
+      //   });
     },
     getRoleListings() {
       const queryParams = {
@@ -164,6 +203,13 @@ export default {
     }
   },
   mounted() {
+    const appStore = useAppStore();
+    // this.employeeId = window.sessionStorage.getItem("employeeId")
+    //   ? window.sessionStorage.getItem("employeeId")
+    //   : 1; // for testing, default to 1
+    console.log(`staff_details: ${JSON.stringify(appStore.staff_details)}`);
+    this.employeeId = appStore.staff_details.staff_id;
+    this.sys_role = appStore.staff_details.sys_role;
     this.getRoleListings();
   },
 };

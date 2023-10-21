@@ -36,19 +36,25 @@ def get_applicants(role_listing_id: int, db: db_dependency):
 @router.post("/applicants/create")
 def create_application(application: RoleApplicationCreate, db: db_dependency):
 
-    try:
-        db_application = models.RoleApplications(
-            role_app_id=application.role_app_id,
-            role_listing_id=application.role_listing_id,
-            staff_id=application.staff_id,
-            role_app_ts_create=datetime.datetime.now(),
-            role_app_status=application.role_app_status
-        )
-        db.add(db_application)
-        db.commit()
-        
+    print(application)
 
-        return {"message": "Application created", "application": jsonable_encoder(db_application)}
+    res = db.query(models.RoleApplications).filter(models.RoleApplications.role_listing_id == application.role_listing_id, models.RoleApplications.staff_id == application.staff_id)
+
+    if res.count() > 0:
+        raise HTTPException(status_code=409, detail="Application already exists")
+
+    try:
+        application_obj = models.RoleApplications(
+            role_listing_id = application.role_listing_id,
+            staff_id = application.staff_id,
+            role_app_status = "applied",
+        )
+
+        db.add(application_obj)
+        db.commit()
+
+        return {"message": "Application created"}
 
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail=str(e))
