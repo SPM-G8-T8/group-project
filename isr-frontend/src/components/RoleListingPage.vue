@@ -39,6 +39,7 @@
             <th class="text-center text-h6">Listing Close</th>
             <th v-if="sys_role=='hr'" class="text-center text-h6">Actions</th>
             <th class="text-center text-h6">Applicants</th>
+            <th class="text-center text-h6">Potential Candidates</th>
           </tr>
         </thead>
         <tr v-for="(listing, index) in roleListings" :key="index">
@@ -53,13 +54,18 @@
           <td class="text-center">{{ listing.role_listing_open }}</td>
           <td class="text-center">{{ listing.role_listing_close }}</td>
           <td v-if="sys_role=='hr'" class="text-center">
-            <v-btn color="grey" class="my-2 mx-3" @click="deactivateListingBtn(listing.role_listing_id)">Deactivate</v-btn>
+            <v-btn color="grey" class="my-2" @click="deactivateListingBtn(listing.role_listing_id)">Deactivate</v-btn>
             <v-btn color="grey" class="my-2 mx-3" @click="openEditDialog(listing.role_listing_id)">Edit
               <EditRoleListingDialog :selectedListingId='listing.role_listing_id' />
             </v-btn>
           </td>
           <td class="text-center py-1">
             <v-btn color="blue" @click="viewApplicants(listing.role_id, listing.role_listing_id)">View applicants</v-btn>
+          </td>
+          <td>
+            <v-btn color="blue-grey" class="my-2 mx-3" @click="openCandidateDialog()">Potential Candidates
+              <CandidatesDialog/>
+            </v-btn>
           </td>
         </tr>
       </v-table>
@@ -76,6 +82,7 @@
 import CreateRoleListingDialog from "@/components/CreateRoleListingDialog.vue";
 import EditRoleListingDialog from "@/components/EditRoleListingDialog.vue";
 import PaginationToolBar from "./PaginationToolBar.vue";
+import CandidatesDialog from "@/components/CandidatesDialog.vue";
 import { getRoleListing, getRoleListingByCreator,deactivateListing } from "@/api/api.js";
 import { useAppStore } from "@/store/app";
 import axios from "axios";
@@ -85,6 +92,7 @@ export default {
     CreateRoleListingDialog,
     EditRoleListingDialog,
     PaginationToolBar,
+    CandidatesDialog
   },
   data() {
     return {
