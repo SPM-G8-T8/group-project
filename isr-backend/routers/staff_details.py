@@ -78,26 +78,15 @@ def update_staff_skills(staff_id: int, skill_id: int, skill_status: str, db: db_
 
 @router.put("/staff-skills/update/{staff_id}/{skill_id}/{skill_status}")
 def update_staff_skills(staff_id: int, skill_id: int, skill_status: str, db: db_dependency):
-
     try:
-        staff_skills = (
-            db.query(models.StaffSkills)
-            .join(models.SkillDetails)
-            .filter(models.StaffSkills.staff_id == staff_id)
-        )
         staff_skills = db.query(models.StaffSkills).filter(models.StaffSkills.staff_id == staff_id, models.StaffSkills.skill_id == skill_id).first()
+
 
         if not staff_skills:
             raise HTTPException(status_code=404, detail="Staff skills not found")
-        db_staff_skills.staff_id = updatedSkills.staff_id
-        db_staff_skills.skill_id = updatedSkills.skill_id
-        db_staff_skills.ss_status = updatedSkills.ss_status
-        db_staff_skills.skill = updatedSkills.skill
+        
+        staff_skills.ss_status = skill_status
         db.commit()
-        return {
-            "message": "Staff Skill updated",
-            "skill": jsonable_encoder(db_staff_skills),
-        }
         return {"message": "Staff Skils updated", "skill": staff_skills}
 
     except Exception as e:
