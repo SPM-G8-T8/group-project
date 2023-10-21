@@ -58,3 +58,4 @@ def update_skill(skill_id: int, skill: SkillDetailsUpdate, db: db_dependency):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    

@@ -104,3 +104,13 @@ class StaffRolesBase(BaseModel):
 
 class StaffRolesRead(StaffRolesBase):
     pass
+
+class StaffSkillCert(BaseModel):
+    staff_id: int
+    skill_id: int
+    certification_name: str
+    certifying_agency: str
+    certification_date: date
+    awardee_name: str
+    file_name: str
+    

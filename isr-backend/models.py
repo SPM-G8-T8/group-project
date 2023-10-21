@@ -106,7 +106,16 @@ class RoleApplications(Base):
     staff = relationship("StaffDetails", backref="role_applications")
 
 
+class StaffSkillsCert(Base):
+    __tablename__ = 'staff_skills_cert'
 
+    staff_id = Column(Integer, ForeignKey(StaffDetails.staff_id), primary_key=True)
+    skill_id = Column(Integer, ForeignKey(SkillDetails.skill_id), primary_key=True)
+    certification_name = Column(String(255), nullable=False)
+    certifying_agency = Column(String(255), nullable=False)
+    certification_date = Column(Date, nullable=False)
+    awardee_name = Column(String(255), nullable=False)
+    file_name   = Column(String(255), nullable=False)
 
 
 
