@@ -6,13 +6,13 @@
             </v-card-title>
             <v-card-text>
                 <v-row>
-                    <h4>Skills Matched:</h4> {{ matchedSkills }}
+                    <h4>Skills Matched:</h4> {{ matchedSkillsString }}
+                </v-row>
+                <v-row >
+                    <h4>Skills Absent:</h4> {{ missingSkillsString }}
                 </v-row>
                 <v-row>
-                    <h4>Skills Absent:</h4> {{ missingSkills }}
-                </v-row>
-                <v-row>                        
-                    <h4>Other Skills: </h4> {{ otherSkills }}
+                    <h4>Other Skills: </h4> {{ otherSkillsString }}
                 </v-row>
             </v-card-text>
             <v-card-actions class="justify-center">
@@ -28,64 +28,75 @@
 <script>
 import { getSkills } from "@/api/api.js"
 import axios from "axios";
-export default{
-    props:{
+export default {
+    props: {
         details: Array
     },
 
-    data(){
+    data() {
         return {
             dialog: false,
-            allSkills: {},
+            allSkills: null,
             matchedSkills: [],
             missingSkills: [],
             otherSkills: [],
             matchedSkillsString: "",
             missingSkillsString: "",
+            otherSkillsString: "",
         }
     },
 
     watch: {
-        dialog(newVal){
-            if(newVal){
-                this.getAllSkills();
-                this.matchedSkills = this.details[1]['matched']
-                this.missingSkills = this.details[1]['unmet']
-                this.otherSkills = this.details[1]['unused']
-                // this.generateSkillName(this.matchedSkills, this.missingSkills)
+        dialog(newVal) {
+            if (newVal) {
+                this.getAllSkills().then(() => {
+                    console.log("Fetched skills")
+                    console.log(this.allSkills)
+                    console.log(this.details)
+                    this.matchedSkills = this.details[1]['matched']
+                    this.missingSkills = this.details[1]['unmet']
+                    this.otherSkills = this.details[1]['unused']
+                    this.generateSkillName(this.matchedSkills, this.missingSkills, this.otherSkills)
+                })
+
             }
         }
     },
 
     methods: {
-        getAllSkills(){
-            axios
-            .get(getSkills)
-            .then((response) => {
-                console.log(response.data.items)
-                this.allSkills = response.data.items
-            }).catch((error) =>{
-                console.error("Error fetching skills: " + error)
-            })
+        async getAllSkills() {
+            if (!this.allSkills) {
+                const response = await axios.get(getSkills);
+                console.log(response.data.items);
+                this.allSkills = response.data.items;
+            }
         },
-        // generateSkillName(matchedSkillsArr, missingSkillsArr){
-        //     if(matchedSkillsArr > 1){
-        //         for(let i=0; i<matchedSkillsArr.length; i++){
-        //             let objSkill = this.allSkills[matchedSkillsArr[i]]
-        //             this.matchedSkillsString += objSkill["skill_name"] + " "
-        //         }
-        //     } if (missingSkillsArr.length > 1) {
-        //         for(let i=0; i<missingSkillsArr.length; i++){
-        //             let objSkill = this.allSkills[missingSkillsArr[i]]
-        //             console.log(objSkill)
-        //             this.missingSkillsString += objSkill["skill_name"] + " "
-        //         }
-        //     } else {
-        //         this.matchedSkillsString = this.allSkills[matchedSkillsArr[0] -1]
-        //         this.missingSkillsString = this.allSkills[missingSkillsArr[0] -1]
-        //     }
-        // },
-        closeDialog(){
+        generateSkillName(matchedSkillsArr, missingSkillsArr, otherSkillsArr) {
+            if (this.allSkills) {
+                this.matchedSkillsString = matchedSkillsArr
+                    .map((skillId) => {
+                        const skill = this.allSkills.find((s) => s.skill_id === skillId);
+                        return skill ? skill.skill_name : "";
+                    })
+                    .join(", ");
+                this.missingSkillsString = missingSkillsArr
+                    .map((skillId) => {
+                        const skill = this.allSkills.find((s) => s.skill_id === skillId);
+                        return skill ? skill.skill_name : "";
+                    })
+                    .join(", ");
+                this.otherSkillsString = otherSkillsArr
+                    .map((skillId) => {
+                        const skill = this.allSkills.find((s) => s.skill_id === skillId);
+                        return skill ? skill.skill_name : "";
+                    })
+                    .join(", ");
+                if(!this.matchedSkillsString){
+                    this.matchedSkillsString = "No matched skills"
+                }
+            }
+        },
+        closeDialog() {
             this.dialog = false;
         }
     }
