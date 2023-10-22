@@ -20,12 +20,17 @@ def upload_file(file, bucket, file_name=None):
     """
 
     try:
+        if file_name[-3:] == 'pdf':
+            extra_args = { 'ContentDisposition' : 'inline','ContentType':'application/pdf'}
+        else:
+            extra_args = { 'ContentDisposition' : 'inline','ContentType':'image/png'}
+
         s3_client.upload_fileobj(
-        file,
-        bucket,
-        file_name,
-        ExtraArgs={'Metadata': {'ContentType': 'image/png'}}
-    )
+            file,
+            bucket,
+            file_name,
+            ExtraArgs = extra_args
+        )
 
     except ClientError as e:
         logging.error(e)
@@ -35,12 +40,9 @@ def upload_file(file, bucket, file_name=None):
 
 def fetch_file(object_key):
     try:
-        response_content_disposition = 'inline'
         response = s3_client.generate_presigned_url(
             ClientMethod='get_object',
-            Params={"Bucket": "spm-proj-bucket", "Key": object_key, 
-                    "ResponseContentDisposition": response_content_disposition,
-                    "ResponseContentType": "image/png"},
+            Params={"Bucket": "spm-proj-bucket", "Key": object_key, },
             ExpiresIn=60000,
         )
         return response

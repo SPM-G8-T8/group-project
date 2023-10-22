@@ -116,10 +116,12 @@ async def upload_cert(db: db_dependency, request: Request):
         db.add(db_staff_skills_cert)
         db.commit()
 
-        file_services.upload_file(
-            file=file.file, bucket="spm-proj-bucket", file_name=new_file_name
-        )
-        return {"message": "Certification uploaded successfully"}
+        if file_services.upload_file(file=file.file, bucket="spm-proj-bucket", file_name=new_file_name):
+            return {"message": "Certification uploaded successfully"}
+        else:
+            return {"message": "error"}
+
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
