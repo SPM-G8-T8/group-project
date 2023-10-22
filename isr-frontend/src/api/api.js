@@ -16,6 +16,7 @@ export const getRoles = rootURL + "/roles/";
 export const getRoleApplication = rootURL + "/applicants/";
 export const createRoleApplication = rootURL + "/applicants/create/";
 
+export const getAllStaff = rootURL + "/all-staff";
 export const getStaffDetails = rootURL + "/staff/";
 export const getStaffSkills = rootURL + "/staff-skills/";
 export const UpdateStaffSkills = rootURL + "/staff-skills/update/";

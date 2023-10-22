@@ -17,6 +17,9 @@ router = APIRouter()
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
+@router.get("/all-staff")
+def get_all_staff(db: db_dependency):
+    return db.query(models.StaffDetails).all()
 
 @router.get("/staff-roles/{staff_id}", response_model=StaffRolesRead)
 def get_staff_roles(staff_id: int, db: db_dependency):
