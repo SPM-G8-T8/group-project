@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="dialog" width="700px" activator="parent" persistent>
+    <v-dialog v-model="dialog" width="900px" activator="parent" persistent>
         <v-card>
             <v-card-title>
                 Potential Candidates

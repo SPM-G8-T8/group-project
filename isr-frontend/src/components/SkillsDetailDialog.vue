@@ -12,7 +12,7 @@
                     <h4>Skills Absent:</h4> {{ missingSkills }}
                 </v-row>
                 <v-row>                        
-                    <h4>Other Skills:</h4>
+                    <h4>Other Skills: </h4> {{ otherSkills }}
                 </v-row>
             </v-card-text>
             <v-card-actions class="justify-center">
@@ -39,6 +39,7 @@ export default{
             allSkills: {},
             matchedSkills: [],
             missingSkills: [],
+            otherSkills: [],
             matchedSkillsString: "",
             missingSkillsString: "",
         }
@@ -50,6 +51,7 @@ export default{
                 this.getAllSkills();
                 this.matchedSkills = this.details[1]['matched']
                 this.missingSkills = this.details[1]['unmet']
+                this.otherSkills = this.details[1]['unused']
                 // this.generateSkillName(this.matchedSkills, this.missingSkills)
             }
         }
