@@ -117,3 +117,9 @@ class StaffSkillCert(BaseModel):
     awardee_name: str
     file_name: str
     
+class StaffReportingOfficerBase(BaseModel):
+    staff_id: int
+    RO_id: int
+
+class StaffReportingOfficerRead(StaffReportingOfficerBase):
+    pass

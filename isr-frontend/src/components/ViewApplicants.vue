@@ -52,7 +52,7 @@
                     <p class="text-subtitle-1">Staff ID: {{ a.staff_id }}</p>
                 </v-card-text>
                 <v-card-actions>
-                    <v-btn color="blue" @click="overlay = !overlay, getStaffRoles(a.staff_id), getStaffSkills(a.staff_id)">View full profile</v-btn>
+                    <v-btn color="blue" @click="overlay = !overlay, getStaffRoles(a.staff_id), getStaffSkills(a.staff_id), getStaffRO(a.staff_id)">View full profile</v-btn>
                     <v-overlay v-model="overlay" class="align-center justify-center">
                         <v-card class="my-1" color="blue-grey-lighten-5" width="350">
                             <v-card-title style="font-size: medium">
@@ -74,16 +74,28 @@
                             <v-card-text>
                             Department: {{ a.dept }} 
                             </v-card-text>
+
+                            <v-card-text v-if="this.staffRO != 0">
+                            Reporting Officer: {{ roDetails.staff_fname }} {{ roDetails.staff_lname }} 
+                                <v-card-subtitle class="d-flex font-italic align-center pa-0">
+                                    RO Contact Email: {{ roDetails.email }}
+                                </v-card-subtitle>
+                                <v-card-subtitle class="d-flex font-italic align-center pa-0">
+                                    RO Contact Phone: {{ roDetails.phone }}
+                                </v-card-subtitle>
+                            </v-card-text>
+
                             <v-card-text v-for="roles in roleDetails" :key="roles.role_id">
                                 Role: {{ roles.role_name }} - {{ roles.role_description }}
                             </v-card-text>
+                            <v-card-text v-if="roleDetails.length==0">No roles listed</v-card-text>
                             <div class="px-4 py-2">
                                 <p class="text-h6">Skills:</p>
                                 <v-chip-group v-for="skill in skillDetails" :key="skill.skill_id">
                                     <v-chip>{{ skill.skill_name }}</v-chip>
                                 </v-chip-group>
                             </div>
-                            <div v-if="skillDetails.length==0">No skills listed</div>
+                            <v-card-text v-if="skillDetails.length==0">No skills listed</v-card-text>
                         </v-card>
                     </v-overlay>
                 </v-card-actions>
@@ -113,7 +125,9 @@ export default {
         noApplicants: false,
         loaded: false,
         overlay: false,
-        search: ""
+        search: "",
+        staffRO: 0,
+        roDetails: [],
     };
   },
   methods: {
@@ -193,6 +207,24 @@ export default {
                 console.log(error);
                 this.staffSkills = [];
                 this.skillDetails = [];
+            });
+    },
+    getStaffRO(staffID) {
+        axios.get(`http://localhost:8000/staff-ro/${staffID}`)
+            .then((response) => {
+                this.staffRO = response.data.RO_id;
+                console.log(this.staffRO);
+                axios.get(`http://localhost:8000/staff/${this.staffRO}`)
+                    .then((response) => {
+                        this.roDetails = response.data;
+                        console.log(this.roDetails);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            })
+            .catch((error) => {
+                console.log(error);
             });
     },
     searchApplicants() {
