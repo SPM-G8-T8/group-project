@@ -93,6 +93,10 @@ export default {
                     .join(", ");
                 if(!this.matchedSkillsString){
                     this.matchedSkillsString = "No matched skills"
+                } if(!this.missingSkillsString){
+                    this.missingSkillsString = "No missing skills"
+                } if(!this.otherSkillsString){
+                    this.otherSkillsString = "No other skills"
                 }
             }
         },
