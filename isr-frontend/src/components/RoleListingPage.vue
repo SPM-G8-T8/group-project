@@ -63,8 +63,8 @@
             <v-btn color="blue" @click="viewApplicants(listing.role_id, listing.role_listing_id)">View applicants</v-btn>
           </td>
           <td>
-            <v-btn color="blue-grey" class="my-2 mx-3" @click="openCandidateDialog()">Potential Candidates
-              <CandidatesDialog/>
+            <v-btn color="blue-grey" class="my-2 mx-3" @click="openCandidateDialog(listing.role_id)">Potential Candidates
+              <CandidatesDialog :selectedRole="listing.role_id"/>
             </v-btn>
           </td>
         </tr>
@@ -103,7 +103,7 @@ export default {
       total: null,
       totalPages: 1,
       selectedListingId: null,
-      // selectedRole: null,
+      selectedRole: null,
       employeeId: null,
       sys_role: "",
     };
@@ -187,10 +187,10 @@ export default {
       this.selectedListingId = listingId;
       console.log(this.selectedListingId + " printed")
     },
-    // openCandidateDialog(roleId){
-    //   this.selectedRole = roleId;
-    //   console.log(this.selectedRole + " printed")
-    // },
+    openCandidateDialog(roleId){
+      this.selectedRole = roleId;
+      console.log(this.selectedRole + " printed")
+    },
     viewApplicants(roleID, listingID) {
       this.$router.push({
         name: "ViewApplicants",

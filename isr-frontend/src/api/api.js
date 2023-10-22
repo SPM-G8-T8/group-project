@@ -9,6 +9,7 @@ export const getSkills = rootURL + "/skills/";
 export const createSkills = rootURL + "/skills/create/";
 
 export const getSkillMatch = rootURL + "/skill-match/matching-percentage/";
+export const getAllStaffMatch = rootURL + "/skill-match/findMatches/";
 export const deactivateListing = rootURL + "/deactivate";
 
 export const getRoles = rootURL + "/roles/";
