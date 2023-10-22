@@ -76,6 +76,8 @@
       @change-page="changePage"
     />
   </v-container>
+  <h1>for testing fileupload</h1>
+  <FileUpload></FileUpload>
 </template>
 
 <script>
@@ -83,6 +85,7 @@ import CreateRoleListingDialog from "@/components/CreateRoleListingDialog.vue";
 import EditRoleListingDialog from "@/components/EditRoleListingDialog.vue";
 import PaginationToolBar from "./PaginationToolBar.vue";
 import CandidatesDialog from "@/components/CandidatesDialog.vue";
+import FileUpload from "@/components/FileUpload.vue"
 import { getRoleListing, getRoleListingByCreator,deactivateListing } from "@/api/api.js";
 import { useAppStore } from "@/store/app";
 import axios from "axios";
@@ -92,7 +95,8 @@ export default {
     CreateRoleListingDialog,
     EditRoleListingDialog,
     PaginationToolBar,
-    CandidatesDialog
+    CandidatesDialog,
+    FileUpload
   },
   data() {
     return {
