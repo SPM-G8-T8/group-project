@@ -5,7 +5,7 @@ from fastapi.encoders import jsonable_encoder
 from database import get_db, SessionLocal
 from sqlalchemy.orm import Session
 from typing import Annotated
-from schemas import SkillDetailsRead, StaffSkillsRead, RoleSkillsRead, StaffSkillsCreate
+from schemas import SkillDetailsRead, StaffSkillsRead, RoleSkillsRead, StaffSkillsCreate, StaffDetailsBase
 import models
 import json
 
@@ -31,13 +31,20 @@ def calculate_matching_skills(staff_id: int, role_id: int, db: Session):
 
     matching_skills = staff_skills_set.intersection(role_skills_set)
     unmet_skills = staff_skills_set.difference(role_skills_set)
+    unused_skills = role_skills_set.difference(staff_skills_set)
 
-    return matching_skills, unmet_skills
+    return {"matching_skills":matching_skills, 
+            "unmet_skills": unmet_skills,
+            "unused_skills": unused_skills}
 
 @router.get("/matching-percentage/{staff_id}/{role_id}")
 async def get_matching_percentage(staff_id: int, role_id: int, db: Session = Depends(get_db)):
     try:
-        matching_skills, unmet_skills = calculate_matching_skills(staff_id, role_id, db)
+        skill_match_dict = calculate_matching_skills(staff_id, role_id, db)
+        matching_skills = skill_match_dict["matching_skills"]
+        unmet_skills = skill_match_dict["unmet_skills"]
+        unused_skills = skill_match_dict["unused_skills"]
+
         if(len(matching_skills)+len(unmet_skills) == 0):
             return {
                 "matching_percentage": 0,
@@ -46,9 +53,11 @@ async def get_matching_percentage(staff_id: int, role_id: int, db: Session = Dep
             }
         
         matching_percentage = (len(matching_skills) / (len(matching_skills) + len(unmet_skills))) * 100
+        unused_percentage = (len(unused_skills) / (len(matching_skills) + len(unmet_skills))) * 100
 
         response_data = {
             "matching_percentage": matching_percentage,
+            "unused_percentage": unused_percentage,
             "matched": matching_skills,
             "unmet": unmet_skills
         }
@@ -111,3 +120,29 @@ def get_all_role_skills(db: db_dependency, role_id: int | None = None, filter: s
         raise HTTPException(status_code=404, detail="No role skills found")
     
     return paginate(role_skills_query)
+
+@router.get("/findMatches/{role_id}", response_model=list[tuple])
+async def get_top_candidates_by_listing(role_id: int, db: Session = Depends(get_db)):
+    candidate_dict = {}
+    all_staff = db.query(models.StaffDetails).all()
+    
+    for staff in all_staff:
+        print(f"Staff Id: {staff.staff_id}, Role Id: {role_id}")
+        res = await get_matching_percentage(staff.staff_id, role_id, db)  # Use await here
+        print(f"res is type: {type(res)}")
+        # check if res has a matching_percentage key
+        if "matching_percentage" in res["data"]:
+            print(res["data"]["matching_percentage"])
+            candidate_dict[staff.staff_id] = res["data"]
+        print("===== CANDIDATE DICT DUMP =====")
+        print(candidate_dict)
+
+    # sort the candidates by highest matching percentage ("matching_percentage") and then lowest unmet skills ("unmet_percentage")
+    sorted_candidates = sorted(candidate_dict.items(), key=lambda x: (x[1]["matching_percentage"], x[1]["unused_percentage"]), reverse=True)
+    print(sorted_candidates)
+    # Q: why is this a tuple?
+    print(type(sorted_candidates[0]))
+
+    # if sorted_candidates is >10, return the top 10
+    return sorted_candidates[:10]
+    
