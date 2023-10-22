@@ -6,28 +6,13 @@
             </v-card-title>
             <v-card-text>
                 <v-row>
-                    <v-col cols="6">
-                        <h4>Skills Matched:</h4>
-                    </v-col>
-                    <v-cols cols="6">
-
-                    </v-cols>
+                    <h4>Skills Matched:</h4> {{ matchedSkills }}
                 </v-row>
                 <v-row>
-                    <v-col cols="6">
-                        <h4>Skills Absent:</h4>
-                    </v-col>
-                    <v-cols cols="6">
-
-                    </v-cols>
+                    <h4>Skills Absent:</h4> {{ missingSkills }}
                 </v-row>
-                <v-row>
-                    <v-col cols="6">
-                        <h4>Other Skills:</h4>
-                    </v-col>
-                    <v-col cols="6">
-
-                    </v-col>
+                <v-row>                        
+                    <h4>Other Skills:</h4>
                 </v-row>
             </v-card-text>
             <v-card-actions class="justify-center">
@@ -41,17 +26,63 @@
 </template>
 
 <script>
+import { getSkills } from "@/api/api.js"
 import axios from "axios";
-
 export default{
+    props:{
+        details: Array
+    },
+
     data(){
         return {
             dialog: false,
+            allSkills: {},
+            matchedSkills: [],
+            missingSkills: [],
+            matchedSkillsString: "",
+            missingSkillsString: "",
+        }
+    },
+
+    watch: {
+        dialog(newVal){
+            if(newVal){
+                this.getAllSkills();
+                this.matchedSkills = this.details[1]['matched']
+                this.missingSkills = this.details[1]['unmet']
+                // this.generateSkillName(this.matchedSkills, this.missingSkills)
+            }
         }
     },
 
     methods: {
-
+        getAllSkills(){
+            axios
+            .get(getSkills)
+            .then((response) => {
+                console.log(response.data.items)
+                this.allSkills = response.data.items
+            }).catch((error) =>{
+                console.error("Error fetching skills: " + error)
+            })
+        },
+        // generateSkillName(matchedSkillsArr, missingSkillsArr){
+        //     if(matchedSkillsArr > 1){
+        //         for(let i=0; i<matchedSkillsArr.length; i++){
+        //             let objSkill = this.allSkills[matchedSkillsArr[i]]
+        //             this.matchedSkillsString += objSkill["skill_name"] + " "
+        //         }
+        //     } if (missingSkillsArr.length > 1) {
+        //         for(let i=0; i<missingSkillsArr.length; i++){
+        //             let objSkill = this.allSkills[missingSkillsArr[i]]
+        //             console.log(objSkill)
+        //             this.missingSkillsString += objSkill["skill_name"] + " "
+        //         }
+        //     } else {
+        //         this.matchedSkillsString = this.allSkills[matchedSkillsArr[0] -1]
+        //         this.missingSkillsString = this.allSkills[missingSkillsArr[0] -1]
+        //     }
+        // },
         closeDialog(){
             this.dialog = false;
         }
