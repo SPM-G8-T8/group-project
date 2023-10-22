@@ -198,7 +198,7 @@ export default {
       });
     },
     deactivateListingBtn(listingID) {
-      axios.patch(`${deactivateListing}/${listingID}`).then(() => {
+      axios.patch(`${deactivateListing}${listingID}`).then(() => {
         // Reload the table to reflect the change
         this.getRoleListings();
       }).catch((err) => {

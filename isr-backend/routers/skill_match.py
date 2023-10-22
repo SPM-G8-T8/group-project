@@ -48,6 +48,7 @@ async def get_matching_percentage(staff_id: int, role_id: int, db: Session = Dep
         if(len(matching_skills)+len(unmet_skills) == 0):
             return {
                 "matching_percentage": 0,
+                "unused_percentage": 0,
                 "matched": [],
                 "unmet": []
             }
@@ -59,7 +60,8 @@ async def get_matching_percentage(staff_id: int, role_id: int, db: Session = Dep
             "matching_percentage": matching_percentage,
             "unused_percentage": unused_percentage,
             "matched": matching_skills,
-            "unmet": unmet_skills
+            "unmet": unmet_skills,
+            "unused": unused_skills
         }
 
         response = {
