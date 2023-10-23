@@ -34,7 +34,7 @@ class RoleListingRead(RoleListingBase):
     role_listing_creator: int
     role_listing_updater: Optional[int]
     role_listing_ts_create: datetime
-    role_listing_ts_update: Optional[datetime]
+    role_listing_ts_update: Optional[datetime] = None
     role: RoleDetails
 
 class SkillDetailsBase(BaseModel):

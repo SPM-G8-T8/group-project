@@ -42,7 +42,6 @@ def get_all_listings(db: db_dependency,
         today = datetime.datetime.now().date()
         res = res.filter(models.RoleListings.role_listing_close >= today, models.RoleListings.role_listing_open <= today) 
 
-
     if filter:
         res = res.filter(models.RoleListings.role_listing_desc.contains(filter))
 
@@ -96,7 +95,8 @@ def create_listings(listing: RoleListingCreate, db: db_dependency):
         db.add(listing_obj)
         db.commit()
 
-        return {"message": "Listing created!", "listing": jsonable_encoder(listing_obj)}
+        listing_data = listing.dict(exclude_unset=True)
+        return {"message": "Listing created!", "listing": jsonable_encoder(listing_data)}
     
     except SQLAlchemyError as e:
         print(e)
