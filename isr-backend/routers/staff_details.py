@@ -4,7 +4,7 @@ from fastapi_pagination.ext.sqlalchemy import paginate
 from database import get_db
 from sqlalchemy.orm import Session
 from typing import Annotated, List
-from schemas import StaffRolesRead, StaffDetailsBase, StaffSkillsRead, StaffSkillsUpdate
+from schemas import StaffRolesRead, StaffDetailsBase, StaffSkillsRead, StaffSkillsUpdate, StaffReportingOfficerRead
 import models
 from services import file_services
 from pathlib import Path
@@ -32,6 +32,18 @@ def get_staff_roles(staff_id: int, db: db_dependency):
         raise HTTPException(status_code=404, detail="Staff roles not found")
     return staff_roles
 
+@router.get("/staff-ro/{staff_id}", response_model=StaffReportingOfficerRead)
+def get_staff_ro(staff_id: int, db: db_dependency):
+    staff_ro = (
+        db.query(models.StaffReportingOfficer)
+        .filter(
+            models.StaffReportingOfficer.staff_id == staff_id,
+        )
+        .first()
+    )
+    if not staff_ro:
+        raise HTTPException(status_code=404, detail="Staff RO not found")
+    return staff_ro
 
 @router.get("/staff-skills/{staff_id}", response_model=List[StaffSkillsRead])
 def get_staff_skills(staff_id: int, db: db_dependency):
@@ -51,6 +63,17 @@ def get_staff_details(staff_email: str, db: db_dependency):
     staff_details = (
         db.query(models.StaffDetails)
         .filter(models.StaffDetails.email == staff_email)
+        .first()
+    )
+    if not staff_details:
+        raise HTTPException(status_code=404, detail="Staff details not found")
+    return staff_details
+
+@router.get("/staff/{staff_id}", response_model=StaffDetailsBase)
+def get_one_staff_details(staff_id: int, db: db_dependency):
+    staff_details = (
+        db.query(models.StaffDetails)
+        .filter(models.StaffDetails.staff_id == staff_id)
         .first()
     )
     if not staff_details:
