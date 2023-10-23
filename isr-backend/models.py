@@ -76,6 +76,12 @@ class StaffSkills(Base):
     staff = relationship("StaffDetails", backref="staff_skills")
     skill = relationship("SkillDetails", backref="staff_skills")
 
+class StaffSkillsSBRP(Base):
+    __tablename__ = 'staff_skills_sbrp'
+    staff_id = Column(Integer, ForeignKey(StaffDetails.staff_id), primary_key=True)
+    skill_id = Column(Integer, ForeignKey(SkillDetails.skill_id), primary_key=True)
+    ss_status = Column(Enum("active", "unverified", "in-progress", name="ss_status_enum"))
+
 class RoleListings(Base):
     __tablename__ = 'role_listings'
 
