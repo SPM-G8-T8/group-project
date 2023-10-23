@@ -15,27 +15,6 @@ from main import app, get_db
 
 DB_URI = os.environ["DB_URI"]
 SQLALCHEMY_DATABASE_URL = DB_URI[:-3] + "test"
-# engine = create_engine(SQLALCHEMY_DATABASE_URL)
-# TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-# Base.metadata.create_all(bind=engine)
-
-# def override_get_db():
-#     connection = engine.connect()
-#     transaction = connection.begin()
-#     db = Session(bind=connection)
-#     # db = Session(engine)
-
-#     yield db
-
-#     db.close()
-#     transaction.rollback()
-#     connection.close()
-
-
-# app.dependency_overrides[get_db] = override_get_db
-
-# client = TestClient(app)
 
 
 @pytest.fixture(scope="session")
@@ -51,10 +30,7 @@ def db_engine():
 @pytest.fixture(scope="function")
 def db(db_engine):
     connection = db_engine.connect()
-
-    # begin a non-ORM transaction
     transaction = connection.begin()
-    # bind an individual Session to the connection
     db = Session(bind=connection)
 
     yield db
@@ -71,6 +47,7 @@ def client(db):
 
 
 def test_create_listings(db, client):
+    listing_id = 10
     response = client.post(
         "/listing/create/",
         json={
@@ -79,17 +56,21 @@ def test_create_listings(db, client):
             "role_listing_source": 1,
             "role_listing_open": "2023-09-23",
             "role_listing_close": "2023-12-12",
-            "role_listing_id": 10,
+            "role_listing_id": listing_id,
             "role_listing_creator": 1,
         },
     )
-    assert response.status_code == 200
+
+    data = response.json()
     response2 = client.get("/listing/10")
+    
+    assert response.status_code == 200
+    assert data["listing"]["role_listing_id"] == listing_id
+
     assert response2.status_code == 200
 
 
 def test_get_all_listings(db, client):
-
     l1 = models.RoleListings(
         role_id=2,
         role_listing_desc="i love to write unit test",
@@ -120,11 +101,10 @@ def test_get_all_listings(db, client):
     data = response.json()
 
     assert response.status_code == 200, response.text
-    assert len(data['items']) == 2
+    assert len(data["items"]) == 2
 
 
 def test_get_all_listings_created_by_staff_id(db, client):
-
     staff_id = 1
     l1 = models.RoleListings(
         role_id=2,
@@ -158,7 +138,7 @@ def test_get_all_listings_created_by_staff_id(db, client):
         role_listing_ts_update=None,
         role_listing_creator=2,
     )
-    
+
     db.add(l1)
     db.add(l2)
     db.add(l3)
@@ -168,29 +148,28 @@ def test_get_all_listings_created_by_staff_id(db, client):
     data = response.json()
 
     assert response.status_code == 200, response.text
-    assert len(data['items']) == 2
+    assert len(data["items"]) == 2
 
 
-# def test_get_listing_by_id(db, client):
-#     listing_to_insert = models.RoleListings(
-#         role_id=2,
-#         role_listing_desc="i love to write unit test",
-#         role_listing_source=1,
-#         role_listing_open="2023-10-26",
-#         role_listing_close="2024-12-12",
-#         role_listing_id=999,
-#         role_listing_ts_create = func.now(),
-#         role_listing_ts_update = None,
-#         role_listing_creator=1,
-#         role_listing_status = "active"
-#     )
+def test_get_listing_by_id(db, client):
+    l1 = models.RoleListings(
+        role_id=2,
+        role_listing_desc="i love to write unit test",
+        role_listing_source=1,
+        role_listing_open="2023-10-26",
+        role_listing_close="2024-12-12",
+        role_listing_id=999,
+        role_listing_ts_create=func.now(),
+        role_listing_ts_update=None,
+        role_listing_creator=1,
+        role_listing_status="active",
+    )
 
-#     # Add the data to the database
-#     db.add(listing_to_insert)
-#     db.commit()  # Commit the changes
+    db.add(l1)
+    db.commit()
 
-#     response = client.get("/listing/999")
-#     response2 = client.get("/listing/")
-#     print("++++++++++++++++++++++++++++")
-#     print(response2.json())
-#     assert response.status_code == 200, response.text
+    response = client.get(f"/listing/{l1.role_listing_id}")
+    data = response.json()
+
+    assert data["role_listing_id"] == l1.role_listing_id
+    assert response.status_code == 200, response.text

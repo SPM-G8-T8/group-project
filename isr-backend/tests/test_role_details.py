@@ -30,8 +30,6 @@ def db_engine():
 def db(db_engine):
     connection = db_engine.connect()
     transaction = connection.begin()
-
-    # bind an individual Session to the connection
     db = Session(bind=connection)
 
     yield db
