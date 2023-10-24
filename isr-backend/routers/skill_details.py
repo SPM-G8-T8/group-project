@@ -1,10 +1,8 @@
 from fastapi import APIRouter, HTTPException, Depends
-from fastapi_pagination import Page, paginate
-from fastapi_pagination.ext.sqlalchemy import paginate
 from fastapi.encoders import jsonable_encoder
 from database import get_db, SessionLocal
 from sqlalchemy.orm import Session
-from typing import Annotated
+from typing import Annotated, List
 from schemas import SkillDetailsRead, SkillDetailsCreate, SkillDetailsUpdate
 import models
 import json
@@ -13,14 +11,14 @@ router = APIRouter()
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
-@router.get("/skills", response_model=Page[SkillDetailsRead])
+@router.get("/skills", response_model=List[SkillDetailsRead])
 def get_all_skills(db: db_dependency, skill_id: int | None = None, filter: str | None = None):
     res = db.query(models.SkillDetails)
     if filter:
         res = res.filter(models.SkillDetails.skill_name.contains(filter))
     if res.count() == 0:
         raise HTTPException(status_code=404, detail="No skills found")
-    return paginate(res)
+    return res
 
 @router.get("/skills/{skill_id}", response_model=SkillDetailsRead)
 def get_skill_by_id(skill_id: int, db: db_dependency):

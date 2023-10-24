@@ -1,11 +1,11 @@
-from fastapi import APIRouter, HTTPException, Depends, Response
+from fastapi import APIRouter, HTTPException, Depends, Response, Query, Request
 from fastapi_pagination import Page, paginate
 from fastapi_pagination.ext.sqlalchemy import paginate
 from fastapi.encoders import jsonable_encoder
 from database import get_db
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
-from typing import Annotated, Optional
+from typing import Annotated, Optional, List
 from schemas import RoleListingCreate, RoleListingRead, RoleListingUpdate
 import models
 import datetime
@@ -27,16 +27,33 @@ db_dependency = Annotated[Session, Depends(get_db)]
 
 
 @router.get("/", response_model=Page[RoleListingRead])
-def get_all_listings(db: db_dependency,  
+def get_all_listings(db: db_dependency,
                      filter: str | None = None,
                      hide_expired: Optional[bool] = True,
-                     role_filter: Optional[int] = None
+                     role_filter: Optional[int] = None,
+                     skills_filter: List[int] = Query([], alias="skills_filter[]")
                      ):
-    
-    res = db.query(models.RoleListings) \
-    .join(models.RoleDetails) \
-    .filter(models.RoleDetails.role_status == "active",
-            models.RoleDetails.role_id == models.RoleListings.role_id)
+
+
+    if skills_filter and len(skills_filter) > 0:
+        subquery = (
+            db.query(models.RoleDetails.role_id)
+            .join(models.RoleSkills)
+            .filter(models.RoleSkills.skill_id.in_(skills_filter))
+            .distinct()
+        )
+
+        res = db.query(models.RoleListings) \
+                .join(models.RoleDetails) \
+                .filter(models.RoleDetails.role_status == "active", 
+                        models.RoleDetails.role_id == models.RoleListings.role_id,
+                        models.RoleDetails.role_id.in_(subquery))
+    else:
+        res = db.query(models.RoleListings) \
+        .join(models.RoleDetails) \
+        .filter(models.RoleDetails.role_status == "active",
+                models.RoleDetails.role_id == models.RoleListings.role_id)
+        
     
     if hide_expired:
         today = datetime.datetime.now().date()
@@ -47,6 +64,8 @@ def get_all_listings(db: db_dependency,
 
     if role_filter:
         res = res.filter(models.RoleListings.role_id == role_filter)
+
+    
 
     return paginate(res)
 
