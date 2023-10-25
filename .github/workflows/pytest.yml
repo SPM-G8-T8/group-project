@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.9  # Use the Python version your project requires
+          python-version: "3.9"  # Use the Python version your project requires
 
       - name: Install dependencies
         run: pip install -r isr-backend/requirements.txt  # Modify as needed
