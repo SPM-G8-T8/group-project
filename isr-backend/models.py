@@ -4,8 +4,9 @@ from database import Base
 
 from sqlalchemy.orm import relationship
 
+
 class StaffDetails(Base):
-    __tablename__ = 'staff_details'
+    __tablename__ = "staff_details"
 
     staff_id = Column(Integer, primary_key=True)
     staff_fname = Column(String(50), nullable=False)
@@ -18,7 +19,7 @@ class StaffDetails(Base):
 
 
 class SkillDetails(Base):
-    __tablename__ = 'skill_details'
+    __tablename__ = "skill_details"
 
     skill_id = Column(Integer, primary_key=True, index=True)
     skill_name = Column(String(50), nullable=False)
@@ -26,7 +27,7 @@ class SkillDetails(Base):
 
 
 class RoleDetails(Base):
-    __tablename__ = 'role_details'
+    __tablename__ = "role_details"
 
     role_id = Column(Integer, primary_key=True, index=True)
     role_name = Column(String(50), nullable=False)
@@ -35,7 +36,7 @@ class RoleDetails(Base):
 
 
 class RoleSkills(Base):
-    __tablename__ = 'role_skills'
+    __tablename__ = "role_skills"
 
     role_id = Column(Integer, ForeignKey(RoleDetails.role_id), primary_key=True)
     skill_id = Column(Integer, ForeignKey(SkillDetails.skill_id), primary_key=True)
@@ -44,19 +45,22 @@ class RoleSkills(Base):
     skill = relationship("SkillDetails", backref="role_skills")
 
 
-
 class StaffReportingOfficer(Base):
-    __tablename__ = 'staff_reporting_officer'
+    __tablename__ = "staff_reporting_officer"
 
     staff_id = Column(Integer, ForeignKey(StaffDetails.staff_id), primary_key=True)
     RO_id = Column(Integer, ForeignKey(StaffDetails.staff_id), primary_key=True)
 
-    staff = relationship("StaffDetails", foreign_keys=[staff_id],  backref="staff_reporting_officer")
-    RO = relationship("StaffDetails", foreign_keys=[RO_id], backref="RO_reporting_officers")
+    staff = relationship(
+        "StaffDetails", foreign_keys=[staff_id], backref="staff_reporting_officer"
+    )
+    RO = relationship(
+        "StaffDetails", foreign_keys=[RO_id], backref="RO_reporting_officers"
+    )
 
 
 class StaffRoles(Base):
-    __tablename__ = 'staff_roles'
+    __tablename__ = "staff_roles"
 
     staff_id = Column(Integer, primary_key=True)
     staff_role = Column(Integer, ForeignKey(RoleDetails.role_id))
@@ -67,23 +71,29 @@ class StaffRoles(Base):
 
 
 class StaffSkills(Base):
-    __tablename__ = 'staff_skills'
+    __tablename__ = "staff_skills"
 
     staff_id = Column(Integer, ForeignKey(StaffDetails.staff_id), primary_key=True)
     skill_id = Column(Integer, ForeignKey(SkillDetails.skill_id), primary_key=True)
-    ss_status = Column(Enum("active", "unverified", "in-progress", name="ss_status_enum"))
+    ss_status = Column(
+        Enum("active", "unverified", "in-progress", name="ss_status_enum")
+    )
 
     staff = relationship("StaffDetails", backref="staff_skills")
     skill = relationship("SkillDetails", backref="staff_skills")
 
+
 class StaffSkillsSBRP(Base):
-    __tablename__ = 'staff_skills_sbrp'
+    __tablename__ = "staff_skills_sbrp"
     staff_id = Column(Integer, ForeignKey(StaffDetails.staff_id), primary_key=True)
     skill_id = Column(Integer, ForeignKey(SkillDetails.skill_id), primary_key=True)
-    ss_status = Column(Enum("active", "unverified", "in-progress", name="ss_status_enum"))
+    ss_status = Column(
+        Enum("active", "unverified", "in-progress", name="ss_status_enum")
+    )
+
 
 class RoleListings(Base):
-    __tablename__ = 'role_listings'
+    __tablename__ = "role_listings"
 
     role_listing_id = Column(Integer, primary_key=True, index=True)
     role_id = Column(Integer, ForeignKey(RoleDetails.role_id))
@@ -95,12 +105,15 @@ class RoleListings(Base):
     role_listing_updater = Column(Integer, ForeignKey(StaffDetails.staff_id))
     role_listing_ts_create = Column(DateTime(timezone=True), server_default=func.now())
     role_listing_ts_update = Column(DateTime(timezone=True), onupdate=func.now())
-    role_listing_status = Column(Enum("active", "inactive", name="role_listing_enum"), server_default="active") 
+    role_listing_status = Column(
+        Enum("active", "inactive", name="role_listing_enum"), server_default="active"
+    )
 
     role = relationship("RoleDetails", backref="role_listings")
 
+
 class RoleApplications(Base):
-    __tablename__ = 'role_applications'
+    __tablename__ = "role_applications"
 
     role_app_id = Column(Integer, primary_key=True, index=True)
     role_listing_id = Column(Integer, ForeignKey(RoleListings.role_listing_id))
@@ -113,7 +126,7 @@ class RoleApplications(Base):
 
 
 class StaffSkillsCert(Base):
-    __tablename__ = 'staff_skills_cert'
+    __tablename__ = "staff_skills_cert"
 
     staff_id = Column(Integer, ForeignKey(StaffDetails.staff_id), primary_key=True)
     skill_id = Column(Integer, ForeignKey(SkillDetails.skill_id), primary_key=True)
@@ -121,8 +134,4 @@ class StaffSkillsCert(Base):
     certifying_agency = Column(String(255), nullable=False)
     certification_date = Column(Date, nullable=False)
     awardee_name = Column(String(255), nullable=False)
-    file_name   = Column(String(255), nullable=False)
-
-
-
-
+    file_name = Column(String(255), nullable=False)

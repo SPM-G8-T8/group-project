@@ -61,7 +61,7 @@ def test_create_listings(db, client):
 
     data = response.json()
     response2 = client.get("/listing/10")
-    
+
     assert response.status_code == 200
     assert data["listing"]["role_listing_id"] == listing_id
 

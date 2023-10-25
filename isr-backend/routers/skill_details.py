@@ -6,15 +6,15 @@ from typing import Annotated, List
 from schemas import SkillDetailsRead, SkillDetailsCreate, SkillDetailsUpdate
 import models
 
-router = APIRouter(
-    prefix='/skills',
-    tags=['skills_details']
-)
+router = APIRouter(prefix="/skills", tags=["skills_details"])
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
+
 @router.get("/", response_model=List[SkillDetailsRead])
-def get_all_skills(db: db_dependency, skill_id: int | None = None, filter: str | None = None):
+def get_all_skills(
+    db: db_dependency, skill_id: int | None = None, filter: str | None = None
+):
     res = db.query(models.SkillDetails)
     if filter:
         res = res.filter(models.SkillDetails.skill_name.contains(filter))
@@ -22,20 +22,26 @@ def get_all_skills(db: db_dependency, skill_id: int | None = None, filter: str |
         raise HTTPException(status_code=404, detail="No skills found")
     return res
 
+
 @router.get("/{skill_id}", response_model=SkillDetailsRead)
 def get_skill_by_id(skill_id: int, db: db_dependency):
-    res = db.query(models.SkillDetails).filter(models.SkillDetails.skill_id == skill_id).first()
+    res = (
+        db.query(models.SkillDetails)
+        .filter(models.SkillDetails.skill_id == skill_id)
+        .first()
+    )
     if not res:
         raise HTTPException(status_code=404, detail="Skill not found")
     return res
+
 
 @router.post("/create")
 def create_skill(skill: SkillDetailsCreate, db: db_dependency):
     try:
         db_skill = models.SkillDetails(
-            skill_id=skill.skill_id, 
-            skill_name=skill.skill_name, 
-            skill_status=skill.skill_status
+            skill_id=skill.skill_id,
+            skill_name=skill.skill_name,
+            skill_status=skill.skill_status,
         )
         db.add(db_skill)
         db.commit()
@@ -45,10 +51,15 @@ def create_skill(skill: SkillDetailsCreate, db: db_dependency):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @router.put("/{skill_id}")
 def update_skill(skill_id: int, skill: SkillDetailsUpdate, db: db_dependency):
     try:
-        db_skill = db.query(models.SkillDetails).filter(models.SkillDetails.skill_id == skill_id).first()
+        db_skill = (
+            db.query(models.SkillDetails)
+            .filter(models.SkillDetails.skill_id == skill_id)
+            .first()
+        )
         if not db_skill:
             raise HTTPException(status_code=404, detail="Skill not found")
         db_skill.skill_name = skill.skill_name
@@ -58,4 +69,3 @@ def update_skill(skill_id: int, skill: SkillDetailsUpdate, db: db_dependency):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    

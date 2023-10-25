@@ -1,11 +1,7 @@
 name: Pylint
 
 on:
-  workflow_run:
-    workflows: ["black-format"] 
-    types:
-      - completed
-
+  [push, pull_request]
 
 jobs:
   build:
