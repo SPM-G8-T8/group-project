@@ -1,8 +1,6 @@
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import func
-from sqlalchemy.pool import StaticPool
 from sqlalchemy.orm import Session
 from sqlalchemy_utils import create_database
 from sqlalchemy_utils import database_exists
@@ -30,7 +28,7 @@ def db_engine():
 @pytest.fixture(scope="function")
 def db(db_engine):
     connection = db_engine.connect()
-    transaction = connection.begin()
+    connection.begin()
     db = Session(bind=connection)
 
     yield db

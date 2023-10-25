@@ -1,6 +1,11 @@
 name: Pylint
 
-on: [push]
+on:
+  workflow_run:
+    workflows: ["black-format"]  # Replace with the name of the linting workflow
+    types:
+      - completed
+
 
 jobs:
   build:

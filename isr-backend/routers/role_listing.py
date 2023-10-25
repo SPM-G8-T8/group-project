@@ -4,12 +4,11 @@ from fastapi_pagination.ext.sqlalchemy import paginate
 from fastapi.encoders import jsonable_encoder
 from database import get_db
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import SQLAlchemyError, IntegrityError
+from sqlalchemy.exc import SQLAlchemyError
 from typing import Annotated, Optional, List
 from schemas import RoleListingCreate, RoleListingRead, RoleListingUpdate
 import models
 import datetime
-import json
 
 
 '''

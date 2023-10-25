@@ -1,5 +1,4 @@
 from fastapi import APIRouter, HTTPException, Depends
-from fastapi.encoders import jsonable_encoder
 from database import get_db
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
@@ -19,9 +18,6 @@ def get_all_roles(db: db_dependency):
 
     try:
         res = db.query(models.RoleDetails).all()
-
-        # for i in res:
-        #     print(i.__dict__)
 
         return res
     

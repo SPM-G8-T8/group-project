@@ -1,15 +1,11 @@
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi_pagination import Page, paginate
 from fastapi_pagination.ext.sqlalchemy import paginate
-from fastapi.encoders import jsonable_encoder
 from database import get_db
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import SQLAlchemyError, IntegrityError
-from typing import Annotated, Optional
-from schemas import RoleApplicationsBase, RoleApplicationCreate, RoleApplicationsRead, StaffDetailsRead
+from typing import Annotated
+from schemas import RoleApplicationCreate, RoleApplicationsRead, StaffDetailsRead
 import models
-import datetime
-import json
 
 router = APIRouter()
 

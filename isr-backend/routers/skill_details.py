@@ -1,17 +1,19 @@
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.encoders import jsonable_encoder
-from database import get_db, SessionLocal
+from database import get_db
 from sqlalchemy.orm import Session
 from typing import Annotated, List
 from schemas import SkillDetailsRead, SkillDetailsCreate, SkillDetailsUpdate
 import models
-import json
 
-router = APIRouter()
+router = APIRouter(
+    prefix='/skills',
+    tags=['skills_details']
+)
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
-@router.get("/skills", response_model=List[SkillDetailsRead])
+@router.get("/", response_model=List[SkillDetailsRead])
 def get_all_skills(db: db_dependency, skill_id: int | None = None, filter: str | None = None):
     res = db.query(models.SkillDetails)
     if filter:
@@ -20,14 +22,14 @@ def get_all_skills(db: db_dependency, skill_id: int | None = None, filter: str |
         raise HTTPException(status_code=404, detail="No skills found")
     return res
 
-@router.get("/skills/{skill_id}", response_model=SkillDetailsRead)
+@router.get("/{skill_id}", response_model=SkillDetailsRead)
 def get_skill_by_id(skill_id: int, db: db_dependency):
     res = db.query(models.SkillDetails).filter(models.SkillDetails.skill_id == skill_id).first()
     if not res:
         raise HTTPException(status_code=404, detail="Skill not found")
     return res
 
-@router.post("/skills/create")
+@router.post("/create")
 def create_skill(skill: SkillDetailsCreate, db: db_dependency):
     try:
         db_skill = models.SkillDetails(
@@ -43,7 +45,7 @@ def create_skill(skill: SkillDetailsCreate, db: db_dependency):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.put("/skills/{skill_id}")
+@router.put("/{skill_id}")
 def update_skill(skill_id: int, skill: SkillDetailsUpdate, db: db_dependency):
     try:
         db_skill = db.query(models.SkillDetails).filter(models.SkillDetails.skill_id == skill_id).first()

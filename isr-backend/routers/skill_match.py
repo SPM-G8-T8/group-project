@@ -1,13 +1,11 @@
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi_pagination import Page, paginate
 from fastapi_pagination.ext.sqlalchemy import paginate
-from fastapi.encoders import jsonable_encoder
-from database import get_db, SessionLocal
+from database import get_db
 from sqlalchemy.orm import Session
 from typing import Annotated
 from schemas import SkillDetailsRead, StaffSkillsRead, RoleSkillsRead, StaffSkillsCreate, StaffDetailsBase
 import models
-import json
 
 router = APIRouter(
     prefix='/skill-match',

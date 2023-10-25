@@ -1,6 +1,4 @@
 from fastapi import APIRouter, HTTPException, Depends, Request
-from fastapi_pagination import Page, paginate
-from fastapi_pagination.ext.sqlalchemy import paginate
 from database import get_db
 from sqlalchemy.orm import Session
 from typing import Annotated, List
