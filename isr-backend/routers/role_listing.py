@@ -100,7 +100,7 @@ def get_listing_created_by_staff(staff_id: int, db: db_dependency):
         .filter(models.StaffDetails.staff_id == staff_id)
         .first()
     )
-    if staff_details.sys_role != "admin":
+    if staff_details.sys_role != "hr":
         res = (
             db.query(models.RoleListings)
             .join(models.RoleDetails)
