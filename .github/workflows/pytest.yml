@@ -21,7 +21,8 @@ jobs:
         run: pip install -r isr-backend/requirements.txt  # Modify as needed
 
       - name: Run pytest
-        env: DB_URI: $ {{ secrets.DB_URI }}
+        env: 
+          DB_URI: $ {{ secrets.DB_URI }}
         run: |
           export DB_URI = $DB_URI
           python -m pytest isr-backend/tests
