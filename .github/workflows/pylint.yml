@@ -2,7 +2,7 @@ name: Pylint
 
 on:
   workflow_run:
-    workflows: ["black-format"]  # Replace with the name of the linting workflow
+    workflows: ["black-format"] 
     types:
       - completed
 
