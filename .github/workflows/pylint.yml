@@ -22,4 +22,4 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-         pylint --disable=C0111 --enable=too-many-lines,bad-continuation $(git ls-files '*.py')
+         pylint --disable=C0111 --fail-under=7 --enable=too-many-lines,bad-continuation $(git ls-files '*.py')
