@@ -22,7 +22,7 @@ jobs:
 
       - name: Run pytest
         env: 
-          DB_URI: $ {{ secrets.DB_URI }}
+          DB_URI: ${{ secrets.DB_URI }}
         run: |
           export DB_URI=$DB_URI
           python -m pytest isr-backend/tests
