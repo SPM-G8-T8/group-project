@@ -17,9 +17,12 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: "3.9"  # Use the Python version your project requires
-
       - name: Install dependencies
         run: pip install -r isr-backend/requirements.txt  # Modify as needed
 
       - name: Run pytest
-        run: python -m pytest isr-backend/tests
+        env: DB_URI: $ {{ secrets.DB_URI }}
+        run: |
+          export DB_URI = $DB_URI
+          python -m pytest isr-backend/tests
+
