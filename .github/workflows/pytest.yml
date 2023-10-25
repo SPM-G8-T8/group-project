@@ -24,6 +24,6 @@ jobs:
         env: 
           DB_URI: $ {{ secrets.DB_URI }}
         run: |
-          export DB_URI = $DB_URI
+          export DB_URI=$DB_URI
           python -m pytest isr-backend/tests
 
