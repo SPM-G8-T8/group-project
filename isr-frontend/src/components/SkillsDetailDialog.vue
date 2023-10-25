@@ -49,11 +49,13 @@ export default {
     watch: {
         dialog(newVal) {
             if (newVal) {
+                console.log("skillsdetail dialog opened")
                 this.getAllSkills().then(() => {
                     console.log("Fetched skills")
                     console.log(this.allSkills)
                     console.log(this.details)
                     this.matchedSkills = this.details[1]['matched']
+                    console.log(this.matchedSkills)
                     this.missingSkills = this.details[1]['unmet']
                     this.otherSkills = this.details[1]['unused']
                     this.generateSkillName(this.matchedSkills, this.missingSkills, this.otherSkills)
@@ -66,9 +68,10 @@ export default {
     methods: {
         async getAllSkills() {
             if (!this.allSkills) {
+                console.log("getAllSkills func")
                 const response = await axios.get(getSkills);
-                console.log(response.data.items);
-                this.allSkills = response.data.items;
+                console.log(response.data);
+                this.allSkills = response.data;
             }
         },
         generateSkillName(matchedSkillsArr, missingSkillsArr, otherSkillsArr) {
@@ -98,7 +101,7 @@ export default {
                 } if(!this.otherSkillsString){
                     this.otherSkillsString = "No other skills"
                 }
-            }
+            } 
         },
         closeDialog() {
             this.dialog = false;
