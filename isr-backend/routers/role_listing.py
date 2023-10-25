@@ -107,7 +107,7 @@ def get_listing_created_by_staff(staff_id: int, db: db_dependency):
             .filter(
                 models.RoleDetails.role_status == "active",
                 models.RoleDetails.role_id == models.RoleListings.role_id,
-                models.RoleListings.role_listing_source == staff_id,
+                models.RoleListings.role_listing_creator == staff_id,
             )
         )
     else:
