@@ -120,6 +120,8 @@ class RoleApplications(Base):
     staff_id = Column(Integer, ForeignKey(StaffDetails.staff_id))
     role_app_ts_create = Column(DateTime(timezone=True), server_default=func.now())
     role_app_status = Column(Enum("applied", "withdrawn", name="role_app_enum"))
+    hr_checked = Column(Enum("pending", "supported", "not_supported", name="hr_checked_enum"), server_default="pending")
+    hr_checked_ts = Column(DateTime(timezone=True))
 
     role_listing = relationship("RoleListings", backref="role_applications")
     staff = relationship("StaffDetails", backref="role_applications")
