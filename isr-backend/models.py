@@ -62,12 +62,13 @@ class StaffReportingOfficer(Base):
 class StaffRoles(Base):
     __tablename__ = "staff_roles"
 
-    staff_id = Column(Integer, primary_key=True)
-    staff_role = Column(Integer, ForeignKey(RoleDetails.role_id))
+    staff_id = Column(Integer, ForeignKey(StaffDetails.staff_id), primary_key=True)
+    staff_role = Column(Integer, ForeignKey(RoleDetails.role_id), primary_key=True)
     role_type = Column(Enum("primary", "secondary", name="role_type_enum"))
     sr_status = Column(Enum("active", "inactive", name="sr_status_enum"))
 
     role = relationship("RoleDetails", backref="staff_roles")
+    staff = relationship("StaffDetails", backref="staff_roles")
 
 
 class StaffSkills(Base):

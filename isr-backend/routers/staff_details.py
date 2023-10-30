@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi.encoders import jsonable_encoder
 from database import get_db
 from sqlalchemy.orm import Session
 from typing import Annotated, List
@@ -24,7 +25,7 @@ def get_all_staff(db: db_dependency):
     return db.query(models.StaffDetails).all()
 
 
-@router.get("/staff-roles/{staff_id}", response_model=StaffRolesRead)
+@router.get("/staff-roles/{staff_id}", response_model=List[StaffRolesRead])
 def get_staff_roles(staff_id: int, db: db_dependency):
     staff_roles = (
         db.query(models.StaffRoles)
@@ -34,6 +35,7 @@ def get_staff_roles(staff_id: int, db: db_dependency):
         )
         .all()
     )
+
     if not staff_roles:
         raise HTTPException(status_code=404, detail="Staff roles not found")
     return staff_roles
