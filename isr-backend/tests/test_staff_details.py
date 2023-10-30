@@ -87,10 +87,10 @@ def test_get_staff_roles(db, client):
 
     db.commit()
 
-    request = client.get("/staff-roles/20")
-    data = request.json()
+    response = client.get("/staff-roles/20")
+    data = response.json()
 
-    assert request.status_code == 200, request.text
+    assert response.status_code == 200, response.text
     assert len(data) == 1
     assert data[0] == {
         "staff_id": 20,
@@ -99,9 +99,9 @@ def test_get_staff_roles(db, client):
         "sr_status": "active",
     }
 
-    request = client.get("/staff-roles/1")
+    response = client.get("/staff-roles/1")
 
-    assert request.status_code == 404, request.text
+    assert response.status_code == 404, response.text
     
 
 
@@ -128,17 +128,17 @@ def test_get_staff_ro(db, client):
 
     db.commit()
 
-    request = client.get("/staff-ro/20")
-    data = request.json()
+    response = client.get("/staff-ro/20")
+    data = response.json()
 
-    assert request.status_code == 200, request.text
+    assert response.status_code == 200, response.text
     assert data == {
         "staff_id": 20,
         "RO_id": 1,
     }
 
-    request = client.get("/staff-ro/1")
-    assert request.status_code == 404, request.text
+    response = client.get("/staff-ro/1")
+    assert response.status_code == 404, response.text
 
 
 def test_get_staff_skills(db, client):
@@ -172,10 +172,10 @@ def test_get_staff_skills(db, client):
     db.commit()
 
 
-    request = client.get("/staff-skills/20")
-    data = request.json()
+    response = client.get("/staff-skills/20")
+    data = response.json()
 
-    assert request.status_code == 200, request.text
+    assert response.status_code == 200, response.text
     assert len(data) == 2
 
 
@@ -196,12 +196,12 @@ def test_get_staff_details(db, client):
 
     db.commit()
 
-    request = client.get("/staff?staff_email=abc@gmail.com")
-    data = request.json()
+    response = client.get("/staff?staff_email=abc@gmail.com")
+    data = response.json()
 
     print(data)
 
-    assert request.status_code == 200, request.text
+    assert response.status_code == 200, response.text
     assert data == {
         "staff_id": 20,
         "staff_fname": "Sammy",
@@ -213,11 +213,11 @@ def test_get_staff_details(db, client):
         "sys_role": "staff"
     }
 
-    request = client.get("/staff?staff_email=abcde@gmail.com")
-    assert request.status_code == 404, request.text
+    response = client.get("/staff?staff_email=abcde@gmail.com")
+    assert response.status_code == 404, response.text
 
-    request = client.get("/staff")
-    assert request.status_code == 422, request.text
+    response = client.get("/staff")
+    assert response.status_code == 422, response.text
     
 
 
