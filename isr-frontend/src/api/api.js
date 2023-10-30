@@ -1,4 +1,8 @@
-const rootURL = "http://localhost:8000";
+const rootURL = import.meta.env.VITE_BASE_URL 
+// || "http://0.0.0.0:8000";
+
+console.log("process.env", process.env)
+console.log('import.meta.env', import.meta.env)
 
 export const getRoleListing = rootURL + "/listing/";
 export const createRoleListing = rootURL + "/listing/create/";

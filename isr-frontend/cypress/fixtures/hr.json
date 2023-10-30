@@ -1,0 +1,10 @@
+{
+  "staff_id": 1,
+  "staff_fname": "John",
+  "staff_lname": "Doe",
+  "dept": "HR",
+  "email": "john.doe@example.com",
+  "phone": "123-456-7890",
+  "biz_address": "123 Main St, City",
+  "sys_role": "hr"
+}

@@ -1,0 +1,12 @@
+[
+    {
+        "skill_id": 2,
+        "skill_name": "Database Management",
+        "skill_status": "active"
+    },
+    {
+        "skill_id": 10,
+        "skill_name": "Digital Marketing",
+        "skill_status": "active"
+    }
+]
