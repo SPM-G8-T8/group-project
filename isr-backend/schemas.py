@@ -3,6 +3,8 @@ from datetime import date, datetime
 from enum import Enum
 from typing import Optional, Union
 
+from sqlalchemy import inspect
+
 
 class RoleDetails(BaseModel):
     role_id: int
@@ -52,8 +54,9 @@ class SkillDetailsCreate(SkillDetailsBase):
     pass
 
 
-class SkillDetailsUpdate(SkillDetailsBase):
-    pass
+class SkillDetailsUpdate(BaseModel):
+    skill_name: Optional[str]
+    skill_status: Optional[str]
 
 
 class SkillDetailsRead(SkillDetailsBase):
