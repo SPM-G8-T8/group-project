@@ -23,26 +23,6 @@
         </ul>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col cols="12">
-        <h2>Update Skills:</h2>
-        <form @submit.prevent="updateSkills">
-          <v-select
-            v-model="selectedSkill"
-            :items="availableSkills"
-            label="Select a Skill"
-            item-text="skill_name"
-            item-value="skill_id"
-          ></v-select>
-          <v-select
-            v-model="selectedStatus"
-            :items="['active', 'in-progress', 'unverified']"
-            label="Select Status"
-          ></v-select>
-          <v-btn type="submit" color="primary">Update Skill</v-btn>
-        </form>
-      </v-col>
-    </v-row>
   </v-container>
 </template>
 
@@ -94,30 +74,6 @@ export default {
         })
         .catch((error) => {
           console.log(JSON.stringify(error));
-        });
-    },
-    updateSkills() {
-      this.staff_skills.forEach((skillObject) => {
-        if (skillObject.skill.skill_name === this.selectedSkill) {
-          this.selectedSkillId = skillObject.skill_id;
-        }
-      });
-      axios({
-        url: `${UpdateStaffSkills}${this.employeeId}?skill_id=${this.selectedSkillId}&skill_status=${this.selectedStatus}`,
-        method: "PUT",
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        },
-      })
-        .then((response) => {
-          alert("Skill updated!");
-          console.log(response);
-          this.getStaffSkills(this.employeeId);
-        })
-        .catch((error) => {
-          alert("Error updating skill.");
-          console.log(error);
         });
     },
     previewCert(skillId) {
