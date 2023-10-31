@@ -1,4 +1,4 @@
-name: Python pytest
+name: Automated Tests
 
 on:
   push:
