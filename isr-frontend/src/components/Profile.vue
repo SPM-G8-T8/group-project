@@ -13,12 +13,16 @@
         <h2>Skills:</h2>
         <ul>
           <li v-for="skill in staff_skills" :key="skill.skill_id">
-            {{ skill.skill.skill_name }} - {{ skill.ss_status }}
+            {{ skill.skill.skill_name }} - {{ skill.ss_status }} 
+            <br />
+            <p class="font-weight-medium mt-2">Update Skill:</p>
+            <div class="mb-5 mt-2">
             <v-btn color="primary">
               Upload Cert
               <FileUpload :staffId="this.employeeId" :skillId="skill.skill_id"/>
             </v-btn>
-            <v-btn @click="previewCert(skill.skill_id)"> Preview Cert </v-btn>
+            <v-btn class="ml-3" @click="previewCert(skill.skill_id)"> Preview Cert </v-btn>
+            </div>
           </li>
         </ul>
       </v-col>
