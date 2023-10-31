@@ -67,8 +67,6 @@ import { useAppStore } from "@/store/app";
 import { mapActions } from "pinia";
 import axios from "axios";
 
-console.log('env', import.meta.env)
-
 export default {
   data: () => ({
     form: false,
@@ -77,13 +75,12 @@ export default {
     loading: false,
   }),
   methods: {
-    onSubmit(e) {
-      e.preventDefault();
+    onSubmit() {
       if (!this.form) return;
       this.loading = true;
       setTimeout(() => (this.loading = false), 2000);
       const { username } = this;
-      
+
       axios
         .get(getStaffDetails, { params: { staff_email: username } })
         .then((response) => {

@@ -20,15 +20,7 @@ export default defineConfig({
       },
     }),
   ],
-  define: { 
-    'import.meta.env.VITE_BASE_URL': "https://test.com",
-    'process.env': {}
-    //   VITE_BASE_URL: {
-    //     env: process.env,
-    //     test: "P"
-    //   }
-    // }
-  },
+  define: { 'process.env': {} },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
