@@ -35,6 +35,19 @@ def get_skill_by_id(skill_id: int, db: db_dependency):
         raise HTTPException(status_code=404, detail="Skill not found")
     return res
 
+@router.delete("/deleteSkill/{skill_id}")
+def delete_skill(skill_id: int, db: db_dependency):
+    db_skill = db.query(models.SkillDetails).filter(models.SkillDetails.skill_id == skill_id).first()
+    if not db_skill:
+        raise HTTPException(status_code=404, detail="Skill not found")
+    
+    try:
+        db.delete(db_skill)
+        db.commit()
+        return {"message": "Skill deleted", "skill": jsonable_encoder(db_skill.to_dict())}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/create")
 def create_skill(skill: SkillDetailsCreate, db: db_dependency):
