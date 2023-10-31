@@ -1,8 +1,6 @@
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import func
-from sqlalchemy.pool import StaticPool
 from sqlalchemy.orm import Session
 from sqlalchemy_utils import create_database
 from sqlalchemy_utils import database_exists
@@ -30,7 +28,7 @@ def db_engine():
 @pytest.fixture(scope="function")
 def db(db_engine):
     connection = db_engine.connect()
-    transaction = connection.begin()
+    connection.begin()
     db = Session(bind=connection)
 
     yield db
@@ -63,7 +61,7 @@ def test_create_listings(db, client):
 
     data = response.json()
     response2 = client.get("/listing/10")
-    
+
     assert response.status_code == 200
     assert data["listing"]["role_listing_id"] == listing_id
 
@@ -104,7 +102,7 @@ def test_get_all_listings(db, client):
     assert len(data["items"]) == 2
 
 
-def test_get_all_listings_created_by_staff_id(db, client):
+def test_get_all_listings_created_for_hr_staff(db, client):
     staff_id = 1
     l1 = models.RoleListings(
         role_id=2,
@@ -131,12 +129,12 @@ def test_get_all_listings_created_by_staff_id(db, client):
     l3 = models.RoleListings(
         role_id=2,
         role_listing_desc="i love to write unit test",
-        role_listing_source=1,
+        role_listing_source=2,
         role_listing_open="2023-10-26",
         role_listing_close="2024-12-12",
         role_listing_id=17,
         role_listing_ts_update=None,
-        role_listing_creator=2,
+        role_listing_creator=staff_id,
     )
 
     db.add(l1)
@@ -148,14 +146,67 @@ def test_get_all_listings_created_by_staff_id(db, client):
     data = response.json()
 
     assert response.status_code == 200, response.text
-    assert len(data["items"]) == 2
+    assert len(data["items"]) == 3
+
+
+def test_get_all_listings_created_for_non_hr_staff(db, client):
+
+    staff_id = 1
+    querying_staff_id = 2
+
+    l1 = models.RoleListings(
+        role_id=2,
+        role_listing_desc="i love to write unit test",
+        role_listing_source=staff_id,
+        role_listing_open="2023-10-26",
+        role_listing_close="2024-12-12",
+        role_listing_id=1,
+        role_listing_ts_update=None,
+        role_listing_creator=staff_id,
+    )
+
+    l2 = models.RoleListings(
+        role_id=2,
+        role_listing_desc="i love to write unit test",
+        role_listing_source=staff_id,
+        role_listing_open="2023-10-26",
+        role_listing_close="2024-12-12",
+        role_listing_id=2,
+        role_listing_ts_update=None,
+        role_listing_creator=staff_id,
+    )
+
+    l3 = models.RoleListings(
+        role_id=2,
+        role_listing_desc="i love to write unit test",
+        role_listing_source=2,
+        role_listing_open="2023-10-26",
+        role_listing_close="2024-12-12",
+        role_listing_id=3,
+        role_listing_ts_update=None,
+        role_listing_creator=staff_id,
+    )
+
+    db.add(l1)
+    db.add(l2)
+    db.add(l3)
+    db.commit()
+
+    response = client.get(f"/listing/created-by/{querying_staff_id}")
+    data = response.json()
+
+    assert response.status_code == 200, response.text
+    assert len(data["items"]) == 1
+
+    response = client.get("/listing/created-by/1")
+    data = response.json()
 
 
 def test_get_listing_by_id(db, client):
     l1 = models.RoleListings(
         role_id=2,
         role_listing_desc="i love to write unit test",
-        role_listing_source=1,
+        role_listing_source=3,
         role_listing_open="2023-10-26",
         role_listing_close="2024-12-12",
         role_listing_id=999,
