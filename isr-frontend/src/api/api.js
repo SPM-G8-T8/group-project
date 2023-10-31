@@ -13,6 +13,8 @@ export const getRoleListingByCreator = rootURL + "/listing/created-by/";
 
 export const getSkills = rootURL + "/skills/";
 export const createSkills = rootURL + "/skills/create/";
+export const editSkills = rootURL + "/skills/editSkill/";
+export const deleteSkill = rootURL + "/skills/deleteSkill/";
 
 export const getSkillMatch = rootURL + "/skill-match/matching-percentage/";
 export const deactivateListing = rootURL + "/listing/deactivate";
