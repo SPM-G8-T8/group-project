@@ -49,6 +49,7 @@
 <script>
 import FileUpload from "@/components/FileUpload.vue";
 import { getStaffSkills } from "@/api/api";
+import { UpdateStaffSkills } from "@/api/api";
 import { FetchStaffSkillCert } from "@/api/api";
 import axios from "axios";
 import { useAppStore } from "@/store/app";
@@ -102,7 +103,7 @@ export default {
         }
       });
       axios({
-        url: `http://localhost:8000/staff-skills/update/${this.employeeId}?skill_id=${this.selectedSkillId}&skill_status=${this.selectedStatus}`,
+        url: `${UpdateStaffSkills}${this.employeeId}?skill_id=${this.selectedSkillId}&skill_status=${this.selectedStatus}`,
         method: "PUT",
         headers: {
           "Access-Control-Allow-Origin": "*",

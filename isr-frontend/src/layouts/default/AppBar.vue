@@ -53,6 +53,10 @@ const navMenu = {
       title: "Manage Listings",
       to: "/role-listing",
     },
+    {
+      title: "Manage Skills",
+      to: "/skills"
+    }
   ],
   staff: [],
   manager: [

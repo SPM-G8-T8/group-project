@@ -115,7 +115,7 @@ def update_staff_skills(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/staff-skills/upload_cert/")
+@router.post("/staff-skills/upload-cert/")
 async def upload_cert(db: db_dependency, request: Request):
     try:
         form = await request.form()

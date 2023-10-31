@@ -1,0 +1,18 @@
+{
+    "role_id": 1,
+    "role_listing_desc": "Admin",
+    "role_listing_source": 1,
+    "role_listing_open": "2023-10-11",
+    "role_listing_close": "2023-11-11",
+    "role_listing_id": 1,
+    "role_listing_creator": 1,
+    "role_listing_updater": 1,
+    "role_listing_ts_create": "2023-10-11T05:42:42",
+    "role_listing_ts_update": "2023-10-22T07:52:11",
+    "role": {
+        "role_id": 1,
+        "role_name": "Admin",
+        "role_description": "Administrator role with full access",
+        "role_status": "active"
+    }
+}
