@@ -1,4 +1,10 @@
-const rootURL = "http://localhost:8000";
+let rootURL;
+
+if (process.env.env == 'prod') {
+  rootURL = "https://spm-backend-tfiy.onrender.com";
+} else {
+  rootURL = "http://localhost:8000";
+}
 
 export const getRoleListing = rootURL + "/listing/";
 export const createRoleListing = rootURL + "/listing/create/";
@@ -23,3 +29,4 @@ export const getStaffDetails = rootURL + "/staff/";
 export const getStaffSkills = rootURL + "/staff-skills/";
 export const UpdateStaffSkills = rootURL + "/staff-skills/update/";
 export const UploadStaffSkillCert = rootURL + "/staff-skills/upload_cert/"
+export const FetchStaffSkillCert = rootURL + "/staff-skills/get-cert/"
