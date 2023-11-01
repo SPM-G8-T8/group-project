@@ -95,65 +95,6 @@ async def get_matching_percentage(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# debugger, just to see all the skills
-@router.get("/allSkills", response_model=Page[SkillDetailsRead])
-def get_all_skills(
-    db: db_dependency, skill_id: int | None = None, filter: str | None = None
-):
-    res = db.query(models.SkillDetails)
-    if filter:
-        res = res.filter(models.SkillDetails.skill_name.contains(filter))
-    if res.count() == 0:
-        raise HTTPException(status_code=404, detail="No skills found")
-    return paginate(res)
-
-
-# debugger, just to see all employees
-@router.get("/staffSkills", response_model=Page[StaffSkillsRead])
-def get_all_employees(
-    db: db_dependency, employee_id: int | None = None, filter: str | None = None
-):
-    # Fetch all staff skills
-    staffSkills = db.query(models.StaffSkills)
-    if not staffSkills:
-        print(f"===== EMPLOYEES DUMP {staffSkills} =====")
-        raise HTTPException(status_code=404, detail="No staff skills found")
-
-    return paginate(staffSkills)
-
-
-@router.post("/addStaffSkills", response_model=StaffSkillsRead)
-def create_staff_skill(staff_skill: StaffSkillsCreate, db: Session = Depends(get_db)):
-    # Create a new StaffSkills object using the data provided in the request
-    new_staff_skill = models.StaffSkills(
-        staff_id=staff_skill.staff_id,
-        skill_id=staff_skill.skill_id,
-        ss_status=staff_skill.ss_status,
-    )
-
-    # Add the new staff skill mapping to the database
-    db.add(new_staff_skill)
-    db.commit()
-    db.refresh(new_staff_skill)
-
-    return new_staff_skill
-
-
-# debugger, just to see all role skills
-@router.get("/roleSkills", response_model=Page[RoleSkillsRead])
-def get_all_role_skills(
-    db: db_dependency, role_id: int | None = None, filter: str | None = None
-):
-    # Fetch all role skills as a SQLAlchemy query
-    role_skills_query = db.query(models.RoleSkills)
-
-    if not role_skills_query.first():
-        print("===== ROLE SKILLS DUMP (Empty Query) =====")
-        raise HTTPException(status_code=404, detail="No role skills found")
-
-    return paginate(role_skills_query)
-
-
 @router.get("/findMatches/{role_id}", response_model=list[tuple])
 async def get_top_candidates_by_listing(role_id: int, db: Session = Depends(get_db)):
     candidate_dict = {}

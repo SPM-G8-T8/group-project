@@ -96,6 +96,9 @@ class StaffSkillsSBRP(Base):
         Enum("active", "unverified", "in-progress", name="ss_status_enum")
     )
 
+    staff = relationship("StaffDetails", backref="staff_skills_sbrp")
+    skill = relationship("SkillDetails", backref="staff_skills_sbrp")
+
 
 class RoleListings(Base):
     __tablename__ = "role_listings"
