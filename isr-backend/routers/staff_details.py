@@ -33,7 +33,7 @@ def get_staff_roles(staff_id: int, db: db_dependency):
             models.StaffRoles.staff_id == staff_id,
             models.StaffRoles.sr_status == "active",
         )
-        .first()
+        .all()
     )
 
     if not staff_roles:
