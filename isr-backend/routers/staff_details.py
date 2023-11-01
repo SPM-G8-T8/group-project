@@ -156,8 +156,14 @@ async def upload_cert(db: db_dependency, request: Request):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/staff-skills/get_cert/{object_key}")
-async def get_cert(object_key: str):
+@router.get("/staff-skills/get-cert/{staff_id}/{skill_id}")
+async def get_cert(db: db_dependency, staff_id: int, skill_id: int):
+    cert_details = db.query(models.StaffSkillsCert).filter_by(staff_id=staff_id, skill_id=skill_id).first()
+
+    if cert_details is None:
+        raise HTTPException(status_code=404, detail="Certification not found")
+    else:
+        object_key = cert_details.file_name
 
     if not file_services.key_exists(object_key):
         raise HTTPException(status_code=404, detail="File not found")

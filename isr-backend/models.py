@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, String, Integer, Date, DateTime, Enum
+from sqlalchemy import Column, ForeignKey, String, Integer, Date, DateTime, Enum, inspect
 from sqlalchemy.sql import func
 from database import Base
 
@@ -24,6 +24,10 @@ class SkillDetails(Base):
     skill_id = Column(Integer, primary_key=True, index=True)
     skill_name = Column(String(50), nullable=False)
     skill_status = Column(Enum("active", "inactive", name="skill_status_enum"))
+
+    def to_dict(self):
+        return {c.key: getattr(self, c.key)
+                for c in inspect(self).mapper.column_attrs}
 
 
 class RoleDetails(Base):
