@@ -99,11 +99,10 @@
 </template>
 
 <script>
-import { getRoleListing, getRoles, getSkills, getStaffSkills } from "@/api/api.js";
+import { getRoleListing, getRoles, getSkills } from "@/api/api.js";
 import RoleListingCard from "@/components/RoleListingCard.vue";
 import PaginationToolBar from "@/components/PaginationToolBar.vue";
 import axios from "axios";
-import { useAppStore } from "@/store/app";
 
 export default {
   components: {
@@ -195,7 +194,7 @@ export default {
   mounted() {
     this.getRoleListings();
     this.getRoles();
-    this.getStaffSkills();
+    this.getSkills();
   },
 };
 </script>
