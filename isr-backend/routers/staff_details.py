@@ -32,7 +32,7 @@ def get_staff_roles(staff_id: int, db: db_dependency):
             models.StaffRoles.staff_id == staff_id,
             models.StaffRoles.sr_status == "active",
         )
-        .all()
+        .first()
     )
     if not staff_roles:
         raise HTTPException(status_code=404, detail="Staff roles not found")
