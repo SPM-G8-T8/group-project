@@ -33,7 +33,7 @@ def get_staff_roles(staff_id: int, db: db_dependency):
             models.StaffRoles.staff_id == staff_id,
             models.StaffRoles.sr_status == "active",
         )
-        .all()
+        .first()
     )
 
     if not staff_roles:
@@ -92,32 +92,7 @@ def get_one_staff_details(staff_id: int, db: db_dependency):
     return staff_details
 
 
-@router.put("/staff-skills/update/{staff_id}/{skill_id}/{skill_status}")
-def update_staff_skills(
-    staff_id: int, skill_id: int, skill_status: str, db: db_dependency
-):
-    try:
-        staff_skills = (
-            db.query(models.StaffSkills)
-            .filter(
-                models.StaffSkills.staff_id == staff_id,
-                models.StaffSkills.skill_id == skill_id,
-            )
-            .first()
-        )
-
-        if not staff_skills:
-            raise HTTPException(status_code=404, detail="Staff skills not found")
-
-        staff_skills.ss_status = skill_status
-        db.commit()
-        return {"message": "Staff Skils updated", "skill": staff_skills}
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.post("/staff-skills/upload_cert/")
+@router.post("/staff-skills/upload-cert/")
 async def upload_cert(db: db_dependency, request: Request):
     try:
         form = await request.form()

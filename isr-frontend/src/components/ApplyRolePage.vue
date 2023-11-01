@@ -29,7 +29,7 @@
         <div class="my-5" style="min-height: 100px;">
           <p class="text-subtitle-2">Skills Required</p>
           <div class="my-2">
-            <v-chip v-for="(skill, index) in roleSkills" :key="index" class="mx-1">{{ skill.skill_name }}</v-chip>
+            <v-chip v-for="(skill, index) in roleSkills" :key="index" class="mx-1" :color="(this.availableSkills.includes(skill.skill_name))? 'green': 'grey'">{{ skill.skill_name }}</v-chip>
           </div>
         </div>
 
@@ -52,20 +52,22 @@
 </template>
 
 <script>
-import { createRoleApplication, getRoleListing } from "@/api/api.js";
+import { createRoleApplication, getRoleListing, getStaffSkills } from "@/api/api.js";
 import { useAppStore } from "@/store/app";
 import axios from "axios";
 
 export default {
   setup() {
     const appStore = useAppStore(); 
-
     return { appStore };
   },
   data() {
     return {
       roleListing: null,
-      roleSkills: []
+      roleSkills: [],
+      employeeId: null,
+      staff_skills: [],
+      availableSkills: [],
     };
   },
   computed: {
@@ -116,10 +118,29 @@ export default {
           alert("Already applied for this role!");
         });
     },
+    getStaffSkills(){
+      axios
+        .get(`${getStaffSkills}${this.employeeId}`)
+        .then((response) => {
+          console.log(JSON.stringify(response.data));
+          this.staff_skills = response.data;
+          this.staff_skills.forEach((skillObject) => {
+            this.availableSkills.push(skillObject.skill.skill_name);
+          });
+          console.log(`==== staff's available skills: ${this.availableSkills}`)
+        })
+        .catch((error) => {
+          console.log("Failed to get staff skills")
+          console.log(JSON.stringify(error));
+        });
+    }
   },
   mounted() {
+    const appStore = useAppStore(); 
+    this.employeeId = appStore.staff_details.staff_id;
     this.getListingDetails();
     this.getRequiredSkills();
+    this.getStaffSkills();
   },
 };
 </script>

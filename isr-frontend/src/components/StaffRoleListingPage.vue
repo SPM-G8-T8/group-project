@@ -120,7 +120,7 @@ export default {
       roles: [],
       role_filter: null,
       skills: [],
-      skills_filter: []
+      skills_filter: [],
     };
   },
   methods: {
@@ -188,7 +188,8 @@ export default {
       }).catch((error) => {
         console.error("Error fetching skills:", error);
       });
-    }
+    },
+    
   },
   mounted() {
     this.getRoleListings();
