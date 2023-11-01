@@ -43,7 +43,7 @@
       </div>
     </v-row>
     <v-row>
-      <div v-for="a in searchApplicants()" :key="a.staff_id">
+      <div v-for="(a, index) in searchApplicants()" :key="index">
         <v-col cols="12">
           <v-card width="350">
             <v-card-title>
@@ -53,43 +53,42 @@
               <p class="text-subtitle-1">Staff ID: {{ a.staff_id }}</p>
             </v-card-text>
             <v-card-actions>
-              <v-btn
+              <v-btn :id="a.staff_id"
                 color="blue"
                 @click="
-                  (overlay = !overlay),
-                    getStaffRoles(a.staff_id),
-                    getStaffSkills(a.staff_id),
-                    getStaffRO(a.staff_id)
+                  (overlay = !overlay), this.staffID=index,
+                    getStaffRoles(this.staffID+1),
+                    getStaffSkills(this.staffID+1),
+                    getStaffRO(this.staffID+1)
                 "
-                >View full profile</v-btn
-              >
+                >View full profile</v-btn>
               <v-overlay v-model="overlay" class="align-center justify-center">
                 <v-card class="my-1" color="blue-grey-lighten-5" width="350">
                   <v-card-title style="font-size: medium">
-                    {{ a.staff_fname }} {{ a.staff_lname }}
+                    {{ this.applicants[this.staffID].staff_fname }} {{ this.applicants[this.staffID].staff_lname }}
                     <v-card-subtitle
                       class="d-flex font-italic align-center pa-0"
                     >
-                      ID: {{ a.staff_id }}
+                      ID: {{ this.applicants[this.staffID].staff_id }}
                     </v-card-subtitle>
                     <v-card-subtitle
                       class="d-flex font-italic align-center pa-0"
                     >
-                      Email: {{ a.email }}
+                      Email: {{ this.applicants[this.staffID].email }}
                     </v-card-subtitle>
                     <v-card-subtitle
                       class="d-flex font-italic align-center pa-0"
                     >
-                      Phone: {{ a.phone }}
+                      Phone: {{ this.applicants[this.staffID].phone }}
                     </v-card-subtitle>
                     <v-card-subtitle
                       class="d-flex font-italic align-center pa-0"
                     >
-                      Office Address: {{ a.biz_address }}
+                      Office Address: {{ this.applicants[this.staffID].biz_address }}
                     </v-card-subtitle>
                   </v-card-title>
 
-                  <v-card-text> Department: {{ a.dept }} </v-card-text>
+                  <v-card-text> Department: {{ this.applicants[this.staffID].dept }} </v-card-text>
 
                   <v-card-text v-if="this.staffRO != 0">
                     Reporting Officer: {{ roDetails.staff_fname }}
@@ -146,6 +145,7 @@ import { getRoleApplication } from "@/api/api";
 import {getStaffDetails} from "@/api/api";
 import { getStaffSkills } from "@/api/api";
 import { getStaffRO } from "@/api/api";
+import { getSkills } from "@/api/api";
 
 export default {
   data() {
@@ -197,15 +197,19 @@ export default {
     },
     // need to test below function
     getStaffRoles(staffID) {
+      this.staffRoles = [];
       axios
         .get(`${getStaffRoles}${staffID}`)
         .then((response) => {
           this.staffRoles = response.data;
           console.log(this.staffRoles);
-          this.roleDetails = [];
-          for (let role in this.staffRoles) {
+          if (this.staffRoles.length == 0) {
+            this.roleDetails = [];
+          }
+          else {
+            this.roleDetails = [];
             axios
-              .get(`${getRoles}${role.staff_role}`)
+              .get(`${getRoles}${this.staffRoles.staff_role}`)
               .then((response) => {
                 this.roleDetails.push(response.data);
                 console.log(this.roleDetails);
@@ -214,6 +218,7 @@ export default {
                 console.log(error);
               });
           }
+          
         })
         .catch((error) => {
           console.log(error);
@@ -225,13 +230,12 @@ export default {
       axios
         .get(`${getStaffSkills}${staffID}`)
         .then((response) => {
-          this.staffSkills = response.data.items;
+          this.staffSkills = response.data;
           this.skillDetails = [];
+          console.log(this.staffSkills)
           for (let skill = 0; skill < this.staffSkills.length; skill++) {
             axios
-              .get(
-                `http://localhost:8000/skills/${this.staffSkills[skill].skill_id}`
-              )
+              .get(`${getSkills}${this.staffSkills[skill].skill_id}`)
               .then((response) => {
                 this.skillDetails.push(response.data);
                 console.log(this.skillDetails);
@@ -248,11 +252,13 @@ export default {
         });
     },
     getStaffRO(staffID) {
+      this.staffRO = [];
       axios
         .get(`${getStaffRO}${staffID}`)
         .then((response) => {
           this.staffRO = response.data.RO_id;
-          console.log(this.staffRO);
+          console.log(this.staffID);
+          this.roDetails = [];
           axios
             .get(`${getStaffDetails}${this.staffRO}`)
             .then((response) => {
