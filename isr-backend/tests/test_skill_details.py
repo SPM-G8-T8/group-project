@@ -15,6 +15,7 @@ from main import app, get_db
 DB_URI = os.environ["DB_URI"]
 SQLALCHEMY_DATABASE_URL = DB_URI[:-3] + "test"
 
+
 @pytest.fixture(scope="session")
 def db_engine():
     engine = create_engine(SQLALCHEMY_DATABASE_URL)
@@ -54,7 +55,16 @@ def test_update_skill_name_positive(client):
     print("----response----")
     print(json.dumps(response.json()))
     assert response.status_code == 200
-    assert response.json() == {"status":200 ,"message": "Skill updated", "skill": {"skill_id": skill_id, "skill_name": new_name, "skill_status": old_status}}
+    assert response.json() == {
+        "status": 200,
+        "message": "Skill updated",
+        "skill": {
+            "skill_id": skill_id,
+            "skill_name": new_name,
+            "skill_status": old_status,
+        },
+    }
+
 
 def test_update_skill_status_positive(client):
     skill_id = 1  # Valid skill_id
@@ -66,7 +76,16 @@ def test_update_skill_status_positive(client):
     print("----response----")
     print(json.dumps(response.json()))
     assert response.status_code == 200
-    assert response.json() == {"status":200, "message": "Skill updated", "skill": {"skill_id": skill_id, "skill_name": old_name, "skill_status": new_status}}
+    assert response.json() == {
+        "status": 200,
+        "message": "Skill updated",
+        "skill": {
+            "skill_id": skill_id,
+            "skill_name": old_name,
+            "skill_status": new_status,
+        },
+    }
+
 
 def test_update_skill_name_and_status_positive(client):
     skill_id = 1  # Valid skill_id
@@ -78,7 +97,16 @@ def test_update_skill_name_and_status_positive(client):
     print("----response----")
     print(json.dumps(response.json()))
     assert response.status_code == 200
-    assert response.json() == {"status":200, "message": "Skill updated", "skill": {"skill_id": skill_id, "skill_name": new_name, "skill_status": new_status}}
+    assert response.json() == {
+        "status": 200,
+        "message": "Skill updated",
+        "skill": {
+            "skill_id": skill_id,
+            "skill_name": new_name,
+            "skill_status": new_status,
+        },
+    }
+
 
 def test_update_skill_not_found(client):
     skill_id = 9999  # Non-existent skill_id

@@ -118,9 +118,29 @@ async def upload_cert(db: db_dependency, request: Request):
         if file_services.upload_file(
             file=file.file, bucket="spm-proj-bucket", file_name=new_file_name
         ):
-            db.add(db_staff_skills_cert)
-            db.add(db_staff_skills_sbrp)
+            existing_staff_skills_cert = (
+                db.query(models.StaffSkillsCert)
+                .filter(
+                    models.StaffSkillsCert.staff_id == staff_id,
+                    models.StaffSkillsCert.skill_id == skill_id,
+                )
+                .first()
+            )
+            if existing_staff_skills_cert:
+                existing_staff_skills_cert.certifying_agency = form["certifying_agency"]
+                existing_staff_skills_cert.certification_name = form[
+                    "certification_name"
+                ]
+                existing_staff_skills_cert.awardee_name = form["awardee_name"]
+                existing_staff_skills_cert.certification_date = form[
+                    "certification_date"
+                ]
+                existing_staff_skills_cert.file_name = new_file_name
+            else:
+                db.add(db_staff_skills_cert)
+                db.add(db_staff_skills_sbrp)
             db.commit()
+
             return {"message": "Certification uploaded successfully"}
         else:
             return {"message": "error"}
@@ -131,7 +151,11 @@ async def upload_cert(db: db_dependency, request: Request):
 
 @router.get("/staff-skills/get-cert/{staff_id}/{skill_id}")
 async def get_cert(db: db_dependency, staff_id: int, skill_id: int):
-    cert_details = db.query(models.StaffSkillsCert).filter_by(staff_id=staff_id, skill_id=skill_id).first()
+    cert_details = (
+        db.query(models.StaffSkillsCert)
+        .filter_by(staff_id=staff_id, skill_id=skill_id)
+        .first()
+    )
 
     if cert_details is None:
         raise HTTPException(status_code=404, detail="Certification not found")

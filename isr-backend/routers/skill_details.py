@@ -35,19 +35,28 @@ def get_skill_by_id(skill_id: int, db: db_dependency):
         raise HTTPException(status_code=404, detail="Skill not found")
     return res
 
+
 @router.delete("/deleteSkill/{skill_id}")
 def delete_skill(skill_id: int, db: db_dependency):
-    db_skill = db.query(models.SkillDetails).filter(models.SkillDetails.skill_id == skill_id).first()
+    db_skill = (
+        db.query(models.SkillDetails)
+        .filter(models.SkillDetails.skill_id == skill_id)
+        .first()
+    )
     if not db_skill:
         raise HTTPException(status_code=404, detail="Skill not found")
-    
+
     try:
         db.delete(db_skill)
         db.commit()
-        return {"message": "Skill deleted", "skill": jsonable_encoder(db_skill.to_dict())}
+        return {
+            "message": "Skill deleted",
+            "skill": jsonable_encoder(db_skill.to_dict()),
+        }
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.post("/create")
 def create_skill(skill: SkillDetailsCreate, db: db_dependency):
@@ -60,24 +69,28 @@ def create_skill(skill: SkillDetailsCreate, db: db_dependency):
         db.add(db_skill)
         db.commit()
 
-        return {"message": "Skill created", "skill": jsonable_encoder(db_skill.to_dict())}
+        return {
+            "message": "Skill created",
+            "skill": jsonable_encoder(db_skill.to_dict()),
+        }
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @router.put("/editSkill/{skill_id}")
 def update_skill(skill_id: int, skill: SkillDetailsUpdate, db: db_dependency):
     db_skill = (
-            db.query(models.SkillDetails)
-            .filter(models.SkillDetails.skill_id == skill_id)
-            .first()
-        )
+        db.query(models.SkillDetails)
+        .filter(models.SkillDetails.skill_id == skill_id)
+        .first()
+    )
     print("---- print db_skill ----")
     print(db_skill is None)
     print(type(db_skill))
     if db_skill is None:
         raise HTTPException(status_code=404, detail="Skill not found")
-    
+
     try:
         if skill.skill_name is not None:
             db_skill.skill_name = skill.skill_name
@@ -86,7 +99,11 @@ def update_skill(skill_id: int, skill: SkillDetailsUpdate, db: db_dependency):
 
         db.commit()
         print(f"+==== DB SKILL: {db_skill.to_dict()} ===+")
-        return {"status":200, "message": "Skill updated", "skill": jsonable_encoder(db_skill.to_dict())}
+        return {
+            "status": 200,
+            "message": "Skill updated",
+            "skill": jsonable_encoder(db_skill.to_dict()),
+        }
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
