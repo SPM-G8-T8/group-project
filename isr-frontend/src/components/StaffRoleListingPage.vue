@@ -99,10 +99,11 @@
 </template>
 
 <script>
-import { getRoleListing, getRoles, getSkills } from "@/api/api.js";
+import { getRoleListing, getRoles, getSkills, getStaffSkills } from "@/api/api.js";
 import RoleListingCard from "@/components/RoleListingCard.vue";
 import PaginationToolBar from "@/components/PaginationToolBar.vue";
 import axios from "axios";
+import { useAppStore } from "@/store/app";
 
 export default {
   components: {
@@ -120,7 +121,7 @@ export default {
       roles: [],
       role_filter: null,
       skills: [],
-      skills_filter: []
+      skills_filter: [],
     };
   },
   methods: {
@@ -188,12 +189,13 @@ export default {
       }).catch((error) => {
         console.error("Error fetching skills:", error);
       });
-    }
+    },
+    
   },
   mounted() {
     this.getRoleListings();
     this.getRoles();
-    this.getSkills();
+    this.getStaffSkills();
   },
 };
 </script>
