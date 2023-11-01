@@ -108,8 +108,7 @@ class StaffRolesBase(BaseModel):
 
 
 class StaffRolesRead(StaffRolesBase):
-    pass
-
+    role: RoleDetails
 
 class StaffSkillsBase(BaseModel):
     staff_id: int

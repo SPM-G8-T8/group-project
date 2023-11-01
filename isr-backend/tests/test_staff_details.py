@@ -68,9 +68,18 @@ def test_get_staff_roles(db, client):
 
     db.add(staff)
 
+    role = models.RoleDetails(
+        role_id=15,
+        role_description="Manage a product's life cycle",
+        role_name="Product Manager",
+        role_status="active"
+    )
+
+    db.add(role)
+
     staff_role1 = models.StaffRoles(
         staff_id=20,
-        staff_role=1,
+        staff_role=15,
         role_type="primary",
         sr_status="active"
     )
@@ -89,14 +98,21 @@ def test_get_staff_roles(db, client):
 
     response = client.get("/staff-roles/20")
     data = response.json()
+    print(data)
 
     assert response.status_code == 200, response.text
     assert len(data) == 1
     assert data[0] == {
         "staff_id": 20,
-        "staff_role": 1,
+        "staff_role": 15,
         "role_type": "primary",
         "sr_status": "active",
+        "role":{
+            "role_id": 15,
+            "role_name": "Product Manager",
+            "role_description": "Manage a product's life cycle",
+            "role_status": "active"
+        }
     }
 
     response = client.get("/staff-roles/1")

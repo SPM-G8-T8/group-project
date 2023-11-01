@@ -29,6 +29,7 @@ def get_all_staff(db: db_dependency):
 def get_staff_roles(staff_id: int, db: db_dependency):
     staff_roles = (
         db.query(models.StaffRoles)
+        .join(models.RoleDetails)
         .filter(
             models.StaffRoles.staff_id == staff_id,
             models.StaffRoles.sr_status == "active",
