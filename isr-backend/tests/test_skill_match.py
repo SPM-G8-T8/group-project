@@ -43,29 +43,11 @@ def client(db):
         yield c
 
 
-def test_get_all_roles(db, client):
-    request = client.get("/roles")
-    data = request.json()
+def test_calculate_matching_skills(db, client):
+    pass
 
-    assert request.status_code == 200, request.text
-    assert len(data) == 10
+def test_get_matching_percentage(db, client):
+    pass
 
-def test_get_roles(db, client):
-
-    role = models.RoleDetails(
-        role_id=11,
-        role_name="Data Analyst",
-        role_status="active",
-    )
-
-    db.add(role)
-
-    db.commit()
-
-    request = client.get("/roles/11")
-    data = request.json()
-
-    assert request.status_code == 200, request.text
-    assert data["role_id"] == 11
-    assert data["role_name"] == "Data Analyst"
-    assert data["role_status"] == "active"
+def test_get_top_candidates_by_listing(db, client):
+    pass

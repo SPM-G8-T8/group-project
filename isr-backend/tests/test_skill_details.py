@@ -92,6 +92,41 @@ def test_update_skill_not_found(client):
     assert response.status_code == 404
     assert response.json() == {"detail": "Skill not found"}
 
+
+def test_get_all_skills(db, client):
+    
+    response = client.get("/skills")
+    data = response.json()
+
+    assert response.status_code == 200, response.text
+    assert len(data) == 10
+
+
+def test_get_skill_by_id(db, client):
+    
+    skill = models.SkillDetails(
+        skill_id=20,
+        skill_name="Test Skill",
+        skill_status="active",
+    )
+
+    db.add(skill)
+    db.commit()
+
+    response = client.get("/skills/20")
+    data = response.json()
+
+    assert response.status_code == 200, response.text
+    assert data == {
+        "skill_id": 20,
+        "skill_name": "Test Skill",
+        "skill_status": "active",
+    }
+
+    response = client.get("/skills/21")
+    assert response.status_code == 404, response.text
+
+    
 def test_delete_skill(db,client):
     test_skill = models.SkillDetails(
         skill_id=999,
@@ -119,3 +154,4 @@ def test_delete_skill_not_found(client):
     print(json.dumps(response.json()))
     assert response.status_code == 404
     assert response.json() == {"detail": "Skill not found"}
+

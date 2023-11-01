@@ -66,12 +66,13 @@ class StaffReportingOfficer(Base):
 class StaffRoles(Base):
     __tablename__ = "staff_roles"
 
-    staff_id = Column(Integer, primary_key=True)
-    staff_role = Column(Integer, ForeignKey(RoleDetails.role_id))
+    staff_id = Column(Integer, ForeignKey(StaffDetails.staff_id), primary_key=True)
+    staff_role = Column(Integer, ForeignKey(RoleDetails.role_id), primary_key=True)
     role_type = Column(Enum("primary", "secondary", name="role_type_enum"))
     sr_status = Column(Enum("active", "inactive", name="sr_status_enum"))
 
     role = relationship("RoleDetails", backref="staff_roles")
+    staff = relationship("StaffDetails", backref="staff_roles")
 
 
 class StaffSkills(Base):
@@ -94,6 +95,9 @@ class StaffSkillsSBRP(Base):
     ss_status = Column(
         Enum("active", "unverified", "in-progress", name="ss_status_enum")
     )
+
+    staff = relationship("StaffDetails", backref="staff_skills_sbrp")
+    skill = relationship("SkillDetails", backref="staff_skills_sbrp")
 
 
 class RoleListings(Base):
@@ -124,6 +128,8 @@ class RoleApplications(Base):
     staff_id = Column(Integer, ForeignKey(StaffDetails.staff_id))
     role_app_ts_create = Column(DateTime(timezone=True), server_default=func.now())
     role_app_status = Column(Enum("applied", "withdrawn", name="role_app_enum"))
+    hr_checked = Column(Enum("pending", "supported", "not_supported", name="hr_checked_enum"), server_default="pending")
+    hr_checked_ts = Column(DateTime(timezone=True))
 
     role_listing = relationship("RoleListings", backref="role_applications")
     staff = relationship("StaffDetails", backref="role_applications")
