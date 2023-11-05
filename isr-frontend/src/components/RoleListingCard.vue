@@ -45,14 +45,14 @@ export default {
 
 
     // this.employeeId = window.sessionStorage.getItem("employeeId")
-    this.getMatchSkills(this.roleListing.role_listing_id);
+    this.getMatchSkills(this.roleListing.role_id);
   },
   methods: {
     async getMatchSkills(roleId) {
       axios
         .get(`${getSkillMatch}${this.employeeId}/${roleId}`)
         .then((response) => {
-          // console.log(response.data.data)
+          // console.log(response.data)
           this.match_skills = response.data.data.matching_percentage;
         })
         .catch((error) => {
