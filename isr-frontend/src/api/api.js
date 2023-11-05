@@ -3,7 +3,7 @@ let rootURL;
 if (import.meta.env.VITE_APP_ENV == 'prod') {
   rootURL = "https://spm-backend-tfiy.onrender.com";
 } else if (import.meta.env.VITE_APP_ENV == 'staging') {
-  rootURL = "https://spm-frontend-staging.onrender.com"
+  rootURL = "https://spm-backend-staging.onrender.com"
 } else {
   rootURL = "http://localhost:8000";
 }
