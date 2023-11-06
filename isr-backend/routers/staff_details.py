@@ -148,7 +148,6 @@ async def upload_cert(db: db_dependency, request: Request):
                 existing_staff_skills_cert.file_name = new_file_name
             else:
                 db.add(db_staff_skills_cert)
-                db.add(db_staff_skills_sbrp)
 
             db.commit()
 
