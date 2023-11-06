@@ -11,7 +11,7 @@ Merged pull requests and code pushes automatically trigger our CI pipeline which
 
 ## Continuous Deployment
 When the backend or frontend folders have a code change from a push or merged pull-request, there is an automatic redeployment to `render.com`. The `main` branch deploys to the staging environment, while the `prod` branch deploys to production.
-![Alt text](../assets/image.png)
+![Alt text](./assets/image.png)
 
 Links to deployed sites:
 - [Staging Frontend](https://spm-frontend-staging.onrender.com)
