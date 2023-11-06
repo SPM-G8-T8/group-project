@@ -19,7 +19,7 @@
                             ></v-text-field>
                         </v-col>
                         <v-col cols="6">
-                            <v-text-field
+                            <!-- <v-text-field
                                 label="Role ID"
                                 variant="outlined"
                                 density="compact"
@@ -28,13 +28,26 @@
                                 :disabled="editSuccess"
                                 :rules="[rules.required, rules.number]"
                             >
-                            </v-text-field>
+                            </v-text-field> -->
+                            <v-select
+                                :items="roleList"
+                                item-title="role_name"
+                                item-value="role_id"
+                                variant="outlined"
+                                density="compact"
+                                hide-details="auto"
+                                clearable
+                                label="Role"
+                                v-model="roleId"
+                                :rules="[rules.required, rules.number]"
+                                :disabled="editSuccess"
+                            ></v-select>
                         </v-col>
                     </v-row>
 
                     <v-row>
-                        <v-col cols="6">
-                        <v-text-field
+                        <v-col cols="12">
+                        <!-- <v-text-field
                             label="Role Listing Source"
                             variant="outlined"
                             density="compact"
@@ -43,7 +56,21 @@
                             :rules="[rules.required, rules.number]"
                             :disabled="editSuccess"
                         >
-                        </v-text-field>
+                        </v-text-field> -->
+                        <v-select
+                            :items="staffList"
+                            item-value="staff_id"
+                            :item-title="staff => staff.staff_fname + ' ' + staff.staff_lname + ' (Staff ID: ' + staff.staff_id + ')'"
+                            variant="outlined"
+                            density="compact"
+                            hide-details="auto"
+                            clearable
+                            label="Role Listing Source"
+                            v-model="roleListingSource"
+                            :rules="[rules.required, rules.number]"
+                            :disabled="editSuccess"
+                            >
+                        </v-select>
                         </v-col>
                     </v-row>
 
@@ -130,6 +157,8 @@ const { staff_details } = storeToRefs(appStore);
 export default {
   props: {
     selectedListingId: Number,
+    roleList: Array,
+    staffList: Array
 },
   data() {
     return {

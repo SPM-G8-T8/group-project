@@ -26,11 +26,11 @@
       <v-spacer></v-spacer>
       <v-btn color="primary" v-if="sys_role == 'hr'">
         + Create Role Listing
-        <CreateRoleListingDialog />
+        <CreateRoleListingDialog :roleList="roleList" :staffList="staffList" />
       </v-btn>
     </div>
     <div>
-      <v-table>
+      <v-table density="compact">
         <thead>
           <tr>
             <th class="text-center text-h6">Role</th>
@@ -42,32 +42,34 @@
             <th class="text-center text-h6">Potential Candidates</th>
           </tr>
         </thead>
-        <tr v-for="(listing, index) in roleListings" :key="index">
-          <td class="text-center pl-4">{{ listing.role.role_name }}</td>
-          <td class="text-center pl-4">
-            {{
-              listing.role_listing_desc
+        <tbody>
+          <tr v-for="(listing, index) in roleListings" :key="index">
+            <td class="text-center pl-4">{{ listing.role.role_name }}</td>
+            <td class="text-center pl-4">
+              {{
+                listing.role_listing_desc
                 ? listing.role_listing_desc
                 : "No Description"
-            }}
-          </td>
-          <td class="text-center">{{ listing.role_listing_open }}</td>
-          <td class="text-center">{{ listing.role_listing_close }}</td>
-          <td v-if="sys_role=='hr'" class="text-center">
-            <v-btn color="grey" class="my-2" @click="deactivateListingBtn(listing.role_listing_id)">Deactivate</v-btn>
-            <v-btn color="grey" class="my-2 mx-3" @click="openEditDialog(listing.role_listing_id)">Edit
-              <EditRoleListingDialog :selectedListingId='listing.role_listing_id' />
-            </v-btn>
-          </td>
-          <td class="text-center py-1">
-            <v-btn color="blue" @click="viewApplicants(listing.role_id, listing.role_listing_id)">View applicants</v-btn>
-          </td>
-          <td class="text-center py-1">
-            <v-btn color="blue-grey" class="my-2 mx-3" @click="openCandidateDialog(listing.role_id)">Potential Candidates
-              <CandidatesDialog :selectedRole="listing.role_id"/>
-            </v-btn>
-          </td>
-        </tr>
+              }}
+            </td>
+            <td class="text-center">{{ listing.role_listing_open }}</td>
+            <td class="text-center">{{ listing.role_listing_close }}</td>
+            <td v-if="sys_role == 'hr'" class="text-center">
+              <v-btn color="grey" class="my-2" density="compact" @click="deactivateListingBtn(listing.role_listing_id)">Deactivate</v-btn>
+              <v-btn color="grey" class="my-2 mx-3" density="compact" @click="openEditDialog(listing.role_listing_id)">Edit
+                <EditRoleListingDialog :roleList="roleList" :staffList="staffList" :selectedListingId='listing.role_listing_id' />
+              </v-btn>
+            </td>
+            <td class="text-center py-1">
+              <v-btn color="blue" density="compact" @click="viewApplicants(listing.role_id, listing.role_listing_id)">View applicants</v-btn>
+            </td>
+            <td class="text-center py-1">
+              <v-btn color="blue-grey" density="compact" class="my-2 mx-3" @click="openCandidateDialog(listing.role_id)">Potential Candidates
+                <CandidatesDialog :selectedRole="listing.role_id"/>
+              </v-btn>
+            </td>
+          </tr>
+        </tbody>
       </v-table>
     </div>
     <PaginationToolBar
@@ -83,7 +85,7 @@ import CreateRoleListingDialog from "@/components/CreateRoleListingDialog.vue";
 import EditRoleListingDialog from "@/components/EditRoleListingDialog.vue";
 import PaginationToolBar from "./PaginationToolBar.vue";
 import CandidatesDialog from "@/components/CandidatesDialog.vue";
-import { getRoleListing, getRoleListingByCreator,deactivateListing } from "@/api/api.js";
+import { getRoleListing, getRoleListingByCreator,deactivateListing, getAllStaff, getRoles } from "@/api/api.js";
 import { useAppStore } from "@/store/app";
 import axios from "axios";
 
@@ -106,6 +108,8 @@ export default {
       selectedRole: null,
       employeeId: null,
       sys_role: "",
+      staffList: [],
+      roleList: [],
     };
   },
   computed: {
@@ -194,7 +198,22 @@ export default {
         console.error(err);
         // You may want to add error messages telling your user about the error
       })
-    }
+    },
+    getAllStaff() {
+      axios.get(getAllStaff).then((response) => {
+        console.log(response.data)
+        this.staffList = response.data
+      }).catch((error) => {
+        console.error(error)
+      })
+    },
+    getRoles() {
+      axios.get(getRoles).then((response) => {
+        this.roleList = response.data
+      }).catch((error) => {
+        console.error(error)
+      })
+    },
   },
   mounted() {
     const appStore = useAppStore();
@@ -205,6 +224,8 @@ export default {
     this.employeeId = appStore.staff_details.staff_id;
     this.sys_role = appStore.staff_details.sys_role;
     this.getRoleListings();
+    this.getAllStaff();
+    this.getRoles();
   },
 };
 </script>

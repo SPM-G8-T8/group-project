@@ -43,7 +43,7 @@ def get_all_listings(
             db.query(models.RoleListings)
             .join(models.RoleDetails)
             .filter(
-                models.RoleDetails.role_status == "active",
+                models.RoleListings.role_listing_status == "active",
                 models.RoleDetails.role_id == models.RoleListings.role_id,
                 models.RoleDetails.role_id.in_(subquery),
             )
@@ -53,7 +53,7 @@ def get_all_listings(
             db.query(models.RoleListings)
             .join(models.RoleDetails)
             .filter(
-                models.RoleDetails.role_status == "active",
+                models.RoleListings.role_listing_status == "active",
                 models.RoleDetails.role_id == models.RoleListings.role_id,
             )
         )
@@ -80,7 +80,6 @@ def get_listing_by_id(listing_id: int, db: db_dependency):
         db.query(models.RoleListings)
         .join(models.RoleDetails)
         .filter(
-            models.RoleDetails.role_status == "active",
             models.RoleDetails.role_id == models.RoleListings.role_id,
             models.RoleListings.role_listing_id == listing_id,
         )
