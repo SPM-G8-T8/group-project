@@ -3,6 +3,22 @@
 ![Linting](https://github.com/SPM-G8-T8/group-project/actions/workflows/pylint.yml/badge.svg)
 ![Automated Tests](https://github.com/SPM-G8-T8/group-project/actions/workflows/pytest.yml/badge.svg)
 
+## User Interface
+Link to Figma: https://www.figma.com/file/v9lNqU7fPQiWlpX4tbX8hI/Jobpilot---Job-Portal-Figma-UI-Template-(Community)-(Community)?type=design&node-id=4403-909&mode=design
+
+## Pre-requisites
+### Clone Codebase:
+```bash
+    git clone https://github.com/SPM-G8-T8/group-project.git
+```
+### Environmental Variables:
+Create a `.env` file in `isr-backend` folder to put environmental variables such as database connection link
+```
+    DB_URI=
+```
+
+## Running application
+
 ### Running Backend:
 ``` bash
     cd isr-backend 
@@ -21,7 +37,9 @@
 
     npm run dev
 ```
+The backend service is running on port `8000`, and the frontend is running on port `3000`.
 
+## Running tests
 
 ### Running backend tests:
 ``` bash
