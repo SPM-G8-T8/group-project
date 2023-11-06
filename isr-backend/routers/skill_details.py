@@ -23,6 +23,17 @@ def get_all_skills(
         raise HTTPException(status_code=404, detail="No skills found")
     return res
 
+@router.get("/byName", response_model=SkillDetailsRead)
+def get_skill_by_name(skill_name: str, db: db_dependency):
+    res = (
+        db.query(models.SkillDetails)
+        .filter(models.SkillDetails.skill_name == skill_name)
+        .first()
+    )
+    if not res:
+        raise HTTPException(status_code=404, detail="Skill not found")
+    return res
+
 
 @router.get("/{skill_id}", response_model=SkillDetailsRead)
 def get_skill_by_id(skill_id: int, db: db_dependency):
