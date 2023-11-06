@@ -106,12 +106,12 @@
                   </v-card-text>
 
                   <v-card-text
-                    v-for="roles in roleDetails"
-                    :key="roles.role_id"
+                    v-for="roles in staffRoles"
+                    :key="roles.role.role_id"
                   >
-                    Role: {{ roles.role_name }} - {{ roles.role_description }}
+                    Role: {{ roles.role.role_name }} - {{ roles.role.role_description }}
                   </v-card-text>
-                  <v-card-text v-if="roleDetails.length == 0"
+                  <v-card-text v-if="staffRoles.length == 0"
                     >No roles listed</v-card-text
                   >
                   <div class="px-4 py-2">
@@ -154,7 +154,6 @@ export default {
       applicants: [],
       listingDetails: [],
       staffRoles: [],
-      roleDetails: [],
       staffSkills: [],
       skillDetails: [],
       staffID: 0,
@@ -203,27 +202,11 @@ export default {
         .then((response) => {
           this.staffRoles = response.data;
           console.log(this.staffRoles);
-          if (this.staffRoles.length == 0) {
-            this.roleDetails = [];
-          }
-          else {
-            this.roleDetails = [];
-            axios
-              .get(`${getRoles}${this.staffRoles.staff_role}`)
-              .then((response) => {
-                this.roleDetails.push(response.data);
-                console.log(this.roleDetails);
-              })
-              .catch((error) => {
-                console.log(error);
-              });
-          }
           
         })
         .catch((error) => {
           console.log(error);
           this.staffRoles = [];
-          this.roleDetails = [];
         });
     },
     getStaffSkills(staffID) {
