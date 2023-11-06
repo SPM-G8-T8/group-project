@@ -130,6 +130,12 @@ class StaffSkillsRead(StaffSkillsBase):
 
     class Config:
         orm_mode = True
+        
+class StaffSkillsSBRPBase(BaseModel):
+    staff_id: int
+    skill_id: int
+    skill_name: str
+    ss_status: str
 
 
 class StaffSkillCert(BaseModel):
