@@ -24,7 +24,7 @@
     <div class="d-flex flex-row mt-7 mr-10 mb-5">
       <p class="text-h6">Search Results</p>
       <v-spacer></v-spacer>
-      <v-btn color="primary">
+      <v-btn color="primary" v-if="sys_role == 'hr'">
         + Create Role Listing
         <CreateRoleListingDialog />
       </v-btn>
@@ -43,7 +43,7 @@
           </tr>
         </thead>
         <tr v-for="(listing, index) in roleListings" :key="index">
-          <td class="text-center pl-4">{{ listing.role_id }}</td>
+          <td class="text-center pl-4">{{ listing.role.role_name }}</td>
           <td class="text-center pl-4">
             {{
               listing.role_listing_desc
@@ -62,7 +62,7 @@
           <td class="text-center py-1">
             <v-btn color="blue" @click="viewApplicants(listing.role_id, listing.role_listing_id)">View applicants</v-btn>
           </td>
-          <td>
+          <td class="text-center py-1">
             <v-btn color="blue-grey" class="my-2 mx-3" @click="openCandidateDialog(listing.role_id)">Potential Candidates
               <CandidatesDialog :selectedRole="listing.role_id"/>
             </v-btn>
@@ -76,8 +76,6 @@
       @change-page="changePage"
     />
   </v-container>
-  <h1>for testing fileupload</h1>
-  <FileUpload></FileUpload>
 </template>
 
 <script>
@@ -85,7 +83,6 @@ import CreateRoleListingDialog from "@/components/CreateRoleListingDialog.vue";
 import EditRoleListingDialog from "@/components/EditRoleListingDialog.vue";
 import PaginationToolBar from "./PaginationToolBar.vue";
 import CandidatesDialog from "@/components/CandidatesDialog.vue";
-import FileUpload from "@/components/FileUpload.vue"
 import { getRoleListing, getRoleListingByCreator,deactivateListing } from "@/api/api.js";
 import { useAppStore } from "@/store/app";
 import axios from "axios";
@@ -95,15 +92,14 @@ export default {
     CreateRoleListingDialog,
     EditRoleListingDialog,
     PaginationToolBar,
-    CandidatesDialog,
-    FileUpload
+    CandidatesDialog
   },
   data() {
     return {
       roleListings: [],
       search: "",
       page: 1,
-      size: 2,
+      size: 10,
       total: null,
       totalPages: 1,
       selectedListingId: null,
@@ -122,12 +118,13 @@ export default {
   },
   methods: {
     fetchRoleListings(queryParams) {
-      console.log(`employee ID: ${this.employeeId}`)
-      console.log(`sys_role: ${this.sys_role}`)
+      // console.log(`employee ID: ${this.employeeId}`)
+      // console.log(`sys_role: ${this.sys_role}`)
       if (this.sys_role == "hr") {
         axios
           .get(getRoleListing, { params: queryParams })
           .then((response) => {
+            console.log(response.data)
             this.roleListings = response.data.items;
             this.page = response.data.page;
             this.total = response.data.total;
@@ -149,18 +146,6 @@ export default {
             console.error("Error fetching role listings:", error);
           });
       }
-      // axios
-      //   .get(getRoleListing, { params: queryParams })
-      //   //.get(`${getRoleListingByCreator}${this.employeeId}`, { params: queryParams })
-      //   .then((response) => {
-      //     this.roleListings = response.data.items;
-      //     this.page = response.data.page;
-      //     this.total = response.data.total;
-      //     this.totalPages = response.data.pages;
-      //   })
-      //   .catch((error) => {
-      //     console.error("Error fetching role listings:", error);
-      //   });
     },
     getRoleListings() {
       const queryParams = {

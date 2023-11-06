@@ -5,7 +5,7 @@
         <p class="text-h5 py-3">Open Role Listings</p>
       </v-col>
       <v-col cols="12" lg="8">
-        <v-text-field
+        <!-- <v-text-field
           v-model="search"
           variant="outlined"
           placeholder="Search Role Listing..."
@@ -16,7 +16,7 @@
           clearable
           hide-details="auto"
         >
-        </v-text-field>
+        </v-text-field> -->
       </v-col>
     </v-row>
 
@@ -120,7 +120,7 @@ export default {
       roles: [],
       role_filter: null,
       skills: [],
-      skills_filter: []
+      skills_filter: [],
     };
   },
   methods: {
@@ -188,7 +188,8 @@ export default {
       }).catch((error) => {
         console.error("Error fetching skills:", error);
       });
-    }
+    },
+    
   },
   mounted() {
     this.getRoleListings();

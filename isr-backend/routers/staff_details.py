@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi.encoders import jsonable_encoder
 from database import get_db
 from sqlalchemy.orm import Session
 from typing import Annotated, List
@@ -24,16 +25,18 @@ def get_all_staff(db: db_dependency):
     return db.query(models.StaffDetails).all()
 
 
-@router.get("/staff-roles/{staff_id}", response_model=StaffRolesRead)
+@router.get("/staff-roles/{staff_id}", response_model=List[StaffRolesRead])
 def get_staff_roles(staff_id: int, db: db_dependency):
     staff_roles = (
         db.query(models.StaffRoles)
+        .join(models.RoleDetails)
         .filter(
             models.StaffRoles.staff_id == staff_id,
             models.StaffRoles.sr_status == "active",
         )
         .all()
     )
+
     if not staff_roles:
         raise HTTPException(status_code=404, detail="Staff roles not found")
     return staff_roles
@@ -57,11 +60,21 @@ def get_staff_ro(staff_id: int, db: db_dependency):
 def get_staff_skills(staff_id: int, db: db_dependency):
     staff_skills = (
         db.query(models.StaffSkills)
-        .join(models.SkillDetails)
         .filter(models.StaffSkills.staff_id == staff_id)
     )
     if not staff_skills:
         raise HTTPException(status_code=404, detail="Staff skills not found")
+    return staff_skills
+
+@router.get("/staff-skills-sbrp/{staff_id}", response_model=List[StaffSkillsRead])
+def get_staff_skills_sbrp(staff_id: int, db: db_dependency):
+    staff_skills = (
+        db.query(models.StaffSkillsSBRP)
+        .join(models.SkillDetails)
+        .filter(models.StaffSkillsSBRP.staff_id == staff_id)
+    )
+    if not staff_skills:
+        raise HTTPException(status_code=404, detail="Staff skills (SBRP) not found")
     return staff_skills
 
 
@@ -111,13 +124,10 @@ async def upload_cert(db: db_dependency, request: Request):
             file_name=new_file_name,
         )
 
-        db_staff_skills_sbrp = models.StaffSkillsSBRP(
-            staff_id=staff_id, skill_id=skill_id, ss_status="unverified"
-        )
-
         if file_services.upload_file(
             file=file.file, bucket="spm-proj-bucket", file_name=new_file_name
         ):
+
             existing_staff_skills_cert = (
                 db.query(models.StaffSkillsCert)
                 .filter(
@@ -139,11 +149,26 @@ async def upload_cert(db: db_dependency, request: Request):
             else:
                 db.add(db_staff_skills_cert)
                 db.add(db_staff_skills_sbrp)
+
             db.commit()
 
             return {"message": "Certification uploaded successfully"}
         else:
             return {"message": "error"}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+    
+@router.post("/staff-skills/add/{staff_id}/{skill_id}")
+def add_skill(staff_id: int, skill_id: int, db: db_dependency):
+    try:
+        db_staff_skills_sbrp = models.StaffSkillsSBRP(
+            staff_id=staff_id, skill_id=skill_id, ss_status="unverified"
+        )
+        db.add(db_staff_skills_sbrp)
+        db.commit()
+        return {"message": "Skill added successfully"}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

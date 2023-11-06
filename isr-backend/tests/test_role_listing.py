@@ -68,6 +68,24 @@ def test_create_listings(db, client):
     assert response2.status_code == 200
 
 
+def test_create_listings_invalid(db, client):
+    # json missing role_id field
+    response = client.post(
+        "/listing/create/",
+        json={
+            "role_listing_desc": "string",
+            "role_listing_source": 1,
+            "role_listing_open": "2023-09-23",
+            "role_listing_close": "2023-12-12",
+            "role_listing_id": 999,
+            "role_listing_creator": 1,
+        },
+    )
+
+    # assert that Unprocessable Entity is thrown
+    assert response.status_code == 422
+
+
 def test_get_all_listings(db, client):
     l1 = models.RoleListings(
         role_id=2,
@@ -150,7 +168,6 @@ def test_get_all_listings_created_for_hr_staff(db, client):
 
 
 def test_get_all_listings_created_for_non_hr_staff(db, client):
-
     staff_id = 1
     querying_staff_id = 2
 
@@ -224,3 +241,125 @@ def test_get_listing_by_id(db, client):
 
     assert data["role_listing_id"] == l1.role_listing_id
     assert response.status_code == 200, response.text
+
+
+def test_edit_listing(db, client):
+    listing_id = 999
+    new_listing_desc = "hello this is the new listing desc"
+
+    l1 = models.RoleListings(
+        role_id=2,
+        role_listing_desc="i love to write unit test",
+        role_listing_source=3,
+        role_listing_open="2023-10-26",
+        role_listing_close="2024-12-12",
+        role_listing_id=listing_id,
+        role_listing_ts_create=func.now(),
+        role_listing_ts_update=None,
+        role_listing_creator=1,
+        role_listing_status="active",
+    )
+
+    db.add(l1)
+    db.commit()
+
+    response = client.put(
+        f"/listing/edit/{listing_id}",
+        json={
+            "role_id": 1,
+            "role_listing_desc": new_listing_desc,
+            "role_listing_source": 1,
+            "role_listing_open": "2023-09-23",
+            "role_listing_close": "2023-12-12",
+            "role_listing_updater": 2,
+        },
+    )
+
+    data = response.json()
+    assert response.status_code == 200, response.text
+    assert data["message"] == "Listing edited"
+    assert data["listing"]["role_listing_desc"] == new_listing_desc
+
+
+def test_get_listing_skills(db, client):
+    listing_id1 = 787
+    listing_id2 = 123
+
+    l1 = models.RoleListings(
+        role_id=1,
+        role_listing_desc="i love to write unit test",
+        role_listing_source=3,
+        role_listing_open="2023-10-26",
+        role_listing_close="2024-12-12",
+        role_listing_id=listing_id1,
+        role_listing_ts_create=func.now(),
+        role_listing_ts_update=None,
+        role_listing_creator=1,
+        role_listing_status="active",
+    )
+
+    l2 = models.RoleListings(
+        role_id=2,
+        role_listing_desc="i love to write unit test",
+        role_listing_source=3,
+        role_listing_open="2023-10-26",
+        role_listing_close="2024-12-12",
+        role_listing_id=listing_id2,
+        role_listing_ts_create=func.now(),
+        role_listing_ts_update=None,
+        role_listing_creator=1,
+        role_listing_status="active",
+    )
+
+    db.add(l1)
+    db.add(l2)
+    db.commit()
+
+    response = client.get(f"/listing/{listing_id1}/skills")
+    response2 = client.get(f"/listing/{listing_id2}/skills")
+    response3 = client.get(f"/listing/77/skills")
+
+    # listing for role with 2 skills
+    data = response.json()
+    assert response.status_code == 200, response.text
+    assert len(data) == 2
+
+    # listing for role with 0 skills
+    data = response2.json()
+    assert response2.status_code == 200, response.text
+    assert len(data) == 0
+
+    # listing does not exist
+    assert response3.status_code == 404, response.text
+
+
+def test_deactivate_listing(db, client):
+    listing_id = 999
+    l1 = models.RoleListings(
+        role_id=1,
+        role_listing_desc="i love to write unit test",
+        role_listing_source=3,
+        role_listing_open="2023-10-26",
+        role_listing_close="2024-12-12",
+        role_listing_id=listing_id,
+        role_listing_ts_create=func.now(),
+        role_listing_ts_update=None,
+        role_listing_creator=1,
+        role_listing_status="active",
+    )
+    
+    db.add(l1)
+    db.commit()
+
+    response = client.get("/listing/")
+    data = response.json()
+    assert len(data["items"]) == 1
+
+    response2 = client.patch(f"/listing/deactivate/{listing_id}")
+    response3 = client.patch("/listing/deactivate/3")
+
+    # successfully deleted
+    assert response2.status_code == 204
+    
+    # listing not found
+    assert response3.status_code == 404

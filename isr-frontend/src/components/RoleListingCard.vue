@@ -41,25 +41,23 @@ export default {
   },
   mounted() {
     const appStore = useAppStore();
-    // this.employeeId = window.sessionStorage.getItem("employeeId")
-    //   ? window.sessionStorage.getItem("employeeId")
-    //   : 1; // for testing, default to 1
-    // console.log(`staff_details: ${JSON.stringify(appStore.staff_details)}`)
     this.employeeId = appStore.staff_details.staff_id;
 
 
     // this.employeeId = window.sessionStorage.getItem("employeeId")
-    this.getMatchSkills(this.roleListing.role_listing_id);
+    this.getMatchSkills(this.roleListing.role_id);
   },
   methods: {
     async getMatchSkills(roleId) {
       axios
         .get(`${getSkillMatch}${this.employeeId}/${roleId}`)
         .then((response) => {
+          // console.log(response.data)
           this.match_skills = response.data.data.matching_percentage;
         })
         .catch((error) => {
-          console.log(JSON.stringify(error));
+          // console.log(JSON.stringify(error.message));
+          this.match_skills = 0;
         });
     },
   },
